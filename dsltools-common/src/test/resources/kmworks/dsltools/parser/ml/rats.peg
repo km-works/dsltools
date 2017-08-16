@@ -1,0 +1,97 @@
+Module        <- Spacing Intro Production* EOF
+
+Intro         <- ModuleDecl Dependency* Header? Body? Footer? Option?
+ModuleDecl    <- "module" FSpacing ModuleRef SEMICOLON
+Dependency    <- Modification / Instantiation / Import
+Modification  <- "modify" FSpacing ModuleRef ModuleTarget? SEMICOLON
+Instantiation <- "instantiate" FSpacing ModuleRef ModuleTarget? SEMICOLON
+Import        <- "import" FSpacing ModuleRef ModuleTarget? SEMICOLON
+ModuleRef     <- QName ModuleParams?
+ModuleParams  <- OPEN ( QName (COMMA QName)* )? CLOSE
+ModuleTarget  <- "as" FSpacing QName
+Header        <- "header" Spacing Action
+Body          <- "body" Spacing Action
+Footer        <- "footer" Spacing Action
+Option        <- "option" FSpacing Attribute (COMMA Attribute)* SEMICOLON
+
+Production    <- Full / Addition / Removal / Override
+Full          <- PAttributes QName Identifier EQUAL Choice SEMICOLON
+Addition      <- QName Identifier PLUSEQUAL
+                 ( SName ELLIPSIS SLASH Choice SEMICOLON
+                 / Choice SLASH SName ELLIPSIS SEMICOLON )
+Removal       <- QName Identifier MINUSEQUAL
+                 SName ( COMMA SName )* SEMICOLON
+Override      <- QName Identifier COLONEQUAL Choice SEMICOLON
+                 / QName Identifier COLONEQUAL ELLIPSIS SLASH Choice SEMICOLON
+                 / QName Identifier COLONEQUAL Choice SLASH ELLIPSIS SEMICOLON
+                 / PAttributes QName Identifier COLONEQUAL ELLIPSIS SEMICOLON
+PAttributes   <- &(QName Identifier EQUAL) / Attribute PAttributes
+Choice        <- Sequence (SLASH Sequence)*
+Sequence      <- !(SName ELLIPSIS / ELLIPSIS) SName? Voided*
+Voided        <- ("void" Spacing COLON)? Prefix
+Prefix        <- (AND / NOT / CARET / Identifier COLON
+                 / StringLit Spacing COLON)? Suffix
+Suffix        <- Primary (QUESTION / STAR / PLUS)?
+Primary       <- NullLit / QName / Literal / NodeMarker / Action 
+                 / OPEN Choice CLOSE
+
+NullLit       <- "null" Spacing
+
+NodeMarker    <- '@' Id Spacing
+
+Action        <- '{' ActionBody* '}' Spacing
+ActionBody    <- Action / CharLit / StringLit / MLComment / SLComment / !'}' .
+
+Attribute     <- Identifier (OPEN AttValue CLOSE)?
+AttValue      <- Integer / QName / StringLit Spacing
+
+QName         <- Id ('.' Id)* Spacing
+SName         <- LESS Id GREATER
+Identifier    <- Id Spacing
+Id            <- [a-zA-Z] [a-zA-Z0-9]*
+
+Literal       <- ('_' / CharLit / StringLit / Class) Spacing
+CharLit       <- ['] (Escape / !['\\] .)  [']
+StringLit     <- ["] (Escape / !["\\] .)* ["]
+Class         <- '[' (Char '-' Char / Char)* ']'
+Char          <- Escape / ![\\\-\]] .
+Escape        <- '\\' [btnfr"'\-\[\\\]] / '\\' 'u' HexQuad / OctalEscape
+OctalEscape   <- '\\' ([0-3] OctDigit OctDigit / OctDigit OctDigit / OctDigit)
+
+Integer       <- (HexNumber / OctNumber / Number) Spacing
+HexNumber     <- '0' [xX] HexDigit+
+HexQuad       <- HexDigit HexDigit HexDigit HexDigit
+HexDigit      <- [0-9a-fA-F]
+Number        <- '0' / NZDigit Digit*
+NZDigit       <- [1-9]
+Digit         <- [0-9]
+OctNumber     <- '0' OctDigit+
+OctDigit      <- [0-7]
+
+ELLIPSIS      <- "..." Spacing
+PLUSEQUAL     <- "+=" Spacing
+MINUSEQUAL    <- "-=" Spacing
+COLONEQUAL    <- ":=" Spacing
+COMMA         <- ',' Spacing
+EQUAL         <- '=' Spacing
+SLASH         <- '/' ![/*] Spacing
+AND           <- '&' Spacing
+NOT           <- '!' Spacing
+CARET         <- '^' Spacing
+COLON         <- ':' Spacing
+QUESTION      <- '?' Spacing
+STAR          <- '*' Spacing
+PLUS          <- '+' Spacing
+OPEN          <- '(' Spacing
+CLOSE         <- ')' Spacing
+SEMICOLON     <- ';' Spacing
+LESS          <- '<'
+GREATER       <- '>' Spacing
+
+Spacing       <- (Space / SLComment / MLComment)*
+FSpacing      <- (Space / SLComment / MLComment)+
+Space         <- ' ' / '\t' / '\f' / EOL
+SLComment     <- "//" (![\n\r] .)* EOL
+MLComment     <- "/*" ('*' !'/' / !'*' .)* "*/"
+EOL           <- '\r' '\n' / '\r' / '\n'
+EOF           <- !.

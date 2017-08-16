@@ -1,0 +1,89 @@
+/*
+ *   Copyright (C) 2012-2017 Christian P. Lerch, Vienna, Austria.
+ *
+ *   This file is part of DSLtools - a suite of software tools for effective
+ *   DSL implementations.
+ *
+ *   DSLtools is free software: you can use, modify and redistribute it under
+ *   the terms of the GNU General Public License version 3 as published by
+ *   the Free Software Foundation, Inc. <http://fsf.org/>
+ *
+ *   DSLtools is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *   version 3 for details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
+ *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+module ADT;
+
+import base.Spacing;                // w EOI Newline etc
+import base.Strings;                // EscapedStringLiteral CodePointRange etc
+import base.Identifiers(base.Spacing);
+
+header {
+import kmworks.dsltools.parser.base.*;
+import kmworks.dsltools.adt.base.*;
+import kmworks.dsltools.adt.adt.*;
+}
+
+option parser(kmworks.dsltools.parser.adt.ADT_Parser);
+
+/*
+  Grammar ADT
+*/
+
+public Grammar Start
+    =   w p:Package 
+        a:ADT 
+        EOI
+        { yyValue = NodeFactory.mkGrammar(p, a); }
+;
+
+ADT ADT
+    =   LADT n:JIdentifier wr main:TypeDef+ aux:( LAUX TypeDef+ RAUX )? RADT
+        { yyValue = NodeFactory.mkADT(n, main, aux); }
+;
+
+TypeDef TypeDef
+    =   k:JKind? n:JIdentifier w p:Parameters? d:( LCURLY TypeDef+ RCURLY )?
+        { yyValue = NodeFactory.mkTypeDef(n, k, p, d); }
+;
+
+Pair<Parameter> Parameters
+    =   LPAREN Parameter ( COMMA Parameter )* RPAREN
+;
+
+Parameter Parameter
+    =   n:JIdentifier w COLON r:TypeRef
+        { yyValue = NodeFactory.mkParameter(n, r); }
+;
+
+TypeRef TypeRef
+    =   n:JTypeName m:[?*+]? w
+        { yyValue = NodeFactory.mkTypeRef(n, m); }
+;
+
+String JKind
+    =   "enum" wr
+;
+
+Pair<String> Package
+    =   PKG f:JPkgNamePart r:( DOT JPkgNamePart )* wr
+;
+
+
+transient void PKG      = "package" wr ;
+transient void LADT     = "<ADT>" w ;
+transient void RADT     = "</ADT>" w ;
+transient void LAUX     = "<AUX>" w ;
+transient void RAUX     = "</AUX>" w ;
+transient void LCURLY   = "{" w ;
+transient void RCURLY   = "}" w ;
+transient void LPAREN   = "(" w ;
+transient void RPAREN   = ")" w ;
+transient void COMMA    = "," w ;
+transient void COLON    = ":" w ;
+transient void DOT      = "." ;

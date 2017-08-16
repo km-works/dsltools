@@ -1,0 +1,18 @@
+package kmworks.dsltools.adt.adt
+
+<ADT> ADT
+
+    Grammar (name:String, main:TypeDef+, aux_:TypeDef*)
+    TypeDef (name:String, kind:String?, parameters:Parameter*, subtypes_:TypeDef*)
+    Parameter (name:String, typeref:TypeRef)
+
+    <AUX>
+        TypeRef (name:String, mult:Multiplicity?)
+        enum Multiplicity {
+            ZeroOrOne
+            ZeroOrMore
+            OneOrMore
+        }
+    </AUX>
+
+</ADT>

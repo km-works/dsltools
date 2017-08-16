@@ -1,0 +1,13 @@
+  #rrd {
+    font-family: Arial, sans-serif;
+    border-width: 1px;
+    border-style: dotted;
+    border-color: rgb(0,36,111);
+    background-color: rgb(240,240,240);
+    padding: 0.5em;
+  }
+  #source {
+    border: 1px inset rgb(160,160,160);
+    background-color: rgb(240,240,240);
+    margin-top: 0.5em;
+  }

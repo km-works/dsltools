@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Grammar>
+	<Production name="Term">
+		<Choice>
+			<Sequence>
+				<NonTerminal name="Primary"/>
+				<Multiple multiplicity="ZeroOrOne">
+					<Choice>
+						<Sequence>
+							<NonTerminal name="OPTION"/>
+						</Sequence>
+						<Sequence>
+							<NonTerminal name="STAR">
+								<annotation linebreakBefore="true"/>
+							</NonTerminal>
+						</Sequence>
+						<Sequence>
+							<NonTerminal name="PLUS"/>
+						</Sequence>
+					</Choice>
+				</Multiple>
+			</Sequence>
+		</Choice>
+	</Production>
+</Grammar>

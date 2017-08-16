@@ -1,0 +1,40 @@
+/*
+ *  PEG grammar
+ */
+
+Grammar     <-  w Definition+ EOI
+
+Definition  <-  Identifier DEFINES Expression
+
+Expression  <-  Sequence (ALT Sequence)* ALT?
+
+Sequence    <-  Term+
+
+Term        <-  ( AND / NOT )? Primary ( OPTION / STAR / PLUS / )
+
+Primary     <-  Identifier !DEFINES
+                / LPAREN Expression RPAREN
+                / Terminal
+
+Terminal    <-  StringLiteral
+                / LBRACK CodePointRange+ RBRACK
+                / DOT
+
+CodePointRange <- CodePoint '-' CodePoint
+                  / CodePoint
+
+CodePoint   <-  EscapeSequence / ![\\\-\]] DOT
+
+DEFINES     <- "<-" w
+ALT         <- '/' w
+AND         <- '&' w
+NOT         <- '!' w
+OPTION      <- '?' w
+STAR        <- '*' w
+PLUS        <- '+' w
+LPAREN      <- '(' w
+RPAREN      <- ')' w
+LBRACK      <- '[' w
+RBRACK      <- ']' w
+DOT         <- '.' w
+EOI         <- !.

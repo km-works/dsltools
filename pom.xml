@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>KM-WORKS DSLTools</name>
+    
+    <parent>
+        <groupId>eu.km-works.meta</groupId>
+        <artifactId>master-pom</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>eu.km-works.dsltools</groupId>
+    <artifactId>dsltools-pom</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    
+    <modules>
+        <module>dsltools-rrd</module>
+        <module>dsltools-common</module>
+        <module>dsltools-rrd-web</module>
+        <module>dsltools-aux</module>
+    </modules>
+    
+    <properties>
+    </properties>
+</project>

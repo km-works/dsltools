@@ -1,0 +1,72 @@
+/*
+ *   Copyright (C) 2012-2017 Christian P. Lerch, Vienna, Austria.
+ *
+ *   This file is part of DSLtools - a suite of software tools for effective
+ *   DSL implementations.
+ *
+ *   DSLtools is free software: you can use, modify and redistribute it under
+ *   the terms of the GNU General Public License version 3 as published by
+ *   the Free Software Foundation, Inc. <http://fsf.org/>
+ *
+ *   DSLtools is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *   version 3 for details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
+ *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+
+/*
+ *  Common definitions for String literals as used throughout DSLtools
+ *
+ *  Note: These productions do NOT process trailing whitespace!
+ *        This MUST be done in the calling modules.
+ */
+
+module base.Strings;
+
+public String StringLiteral 
+  = s:EscapedStringLiteral
+    { yyValue = unescape(s); }
+;
+
+public String EscapedStringLiteral 
+  = s:QuotedStringLiteral
+    { yyValue = s.substring(1, s.length()-1); }
+;
+
+private String QuotedStringLiteral 
+  = <DQ_STRING> ["] ( [\\]["\\] / !["] !InvalidStringContent _ )* ["]
+  / <SQ_STRING> ['] ( [\\]['\\] / !['] !InvalidStringContent _ )* ['] 
+;
+
+private void InvalidStringContent
+  = c:_ &{ isInvalidStringCharacter(c) }
+;
+
+/*
+ *  Unicode codepoints and codepoint sets
+ */
+public String CodePointRange
+  = f:CodePoint void:'-' s:CodePoint
+    { yyValue = f + "-" + s; }
+  / CodePoint
+;
+
+public String CodePoint
+  = EscapeSequence
+  / ![\\\-\]] c:_
+    { yyValue = String.valueOf(c); }
+;
+
+transient String EscapeSequence
+  = '\\' [tbnrf"'] 
+  / UnicodeEscape
+;
+
+transient String UnicodeEscape = '\\' 'u' HexQuad ;
+
+transient String HexQuad       = HexDigit HexDigit HexDigit HexDigit ;
+transient String HexDigit      = [0-9a-fA-F] ;

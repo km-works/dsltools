@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>eu.km-works.dsltools</groupId>
+        <artifactId>kmw-rats</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    
+    <artifactId>kmw-rats-gen</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    
+    <name>KMW Rats Generator</name>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>kmw-rats-rt</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    <properties>
+    </properties>
+</project>

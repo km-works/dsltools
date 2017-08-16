@@ -1,0 +1,102 @@
+/*
+ *   Copyright (C) 2012-2017 Christian P. Lerch, Vienna, Austria.
+ *
+ *   This file is part of DSLtools - a suite of software tools for effective
+ *   DSL implementations.
+ *
+ *   DSLtools is free software: you can use, modify and redistribute it under
+ *   the terms of the GNU General Public License version 3 as published by
+ *   the Free Software Foundation, Inc. <http://fsf.org/>
+ *
+ *   DSLtools is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *   version 3 for details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
+ *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+
+/*
+ *  Common definitions for Whitespace and Comments as used throughout DSLtools
+ */
+
+module base.Spacing;
+
+public transient void w   = Spacing* ;      // optional whitespace including newlines and comments
+public transient void wr  = Spacing+ ;      // required whitespace including newlines and comments
+public transient void s   = Space*;         // optional whitespace without newlines or comments
+public transient void sr  = Space+;         // required whitespace without newlines or comments
+public transient void nl  = s Newline;      // newline
+public transient void EOI = !_ ;
+
+
+public transient void Spacing =
+    Whitespace
+  / TBlockComment
+  / NBlockComment
+  / LineComment
+;
+
+public transient void Whitespace =
+    Space
+  / Newline 
+;
+
+public transient void Space =
+    void:[ \t]
+;
+
+public transient void Newline =
+    void:"\r\n" 
+  / void:[\r\n\u2028\u2029]     // Unicode U+2028 line separator and U+2029 paragraph separator
+;
+
+
+/*
+ *  Traditional Block Comment (not nestable)
+ */
+ 
+private void TBlockComment = "/*" TBCommentContents "*/" ;
+
+private transient void TBCommentContents = TBCommentContent* ;
+
+private transient void TBCommentContent
+  = '*' !'/'
+  / Whitespace
+  / !'*' _
+;
+
+
+/*
+ *  Nestable Pascal-style Block Comment
+ */
+ 
+private void NBlockComment = "(*" NBCommentContents "*)" ;
+
+private transient void NBCommentContents = NBCommentContent* ;
+
+private transient void NBCommentContent
+  = "(*)"
+  / NBlockComment
+  / '*' !')'
+  / Whitespace
+  / !'*' _
+;
+
+
+/*
+ *  Single line comment
+ */
+
+private transient void LineComment = "//" ( !Newline _ )* (Newline / &EOI) ;
+
+
+/*
+ *  XML White Space
+ *
+[3]   	S	   ::=   (#x20 | #x9 | #xD | #xA)+
+                      " "   "\t"  "\r"  "\n"
+                     Space  TAB    CR    LF
+*/

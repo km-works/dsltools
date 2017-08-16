@@ -1,0 +1,158 @@
+/*
+ *   Copyright (C) 2012-2017 Christian P. Lerch, Vienna, Austria.
+ *
+ *   This file is part of DSLtools - a suite of software tools for effective
+ *   DSL implementations.
+ *
+ *   DSLtools is free software: you can use, modify and redistribute it under
+ *   the terms of the GNU General Public License version 3 as published by
+ *   the Free Software Foundation, Inc. <http://fsf.org/>
+ *
+ *   DSLtools is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *   version 3 for details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
+ *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+module EBNF_W3C;
+
+import base.Spacing;    // w EOI Newline etc
+import base.Strings;    // EscapedStringLiteral CodePointRange etc
+
+header {
+import kmworks.dsltools.parser.base.*;
+import kmworks.dsltools.adt.ml.*;
+}
+
+option parser(kmworks.dsltools.parser.ml.EBNF_W3C_Parser);
+
+/*
+
+*/
+
+
+/*   
+ *  Grammar :: Production+
+ */
+public Grammar Start
+  = w p:Production+ EOI
+    { yyValue = NodeFactory.mkGrammar(p); }
+;
+
+/*
+ *  Production :: Name Choice+
+ */
+Production Production
+  = n:Name w DEFINES f:Choice r:(CONTINUE Choice)* PROD_SEP
+    { yyValue = NodeFactory.mkProduction(n, f, r); }
+;
+
+/*   Choice = Sequence+ | EpsilonChoice
+ *   EpsilonChoice = Sequence+
+ */
+Choice Choice
+  = f:Sequence r:(void:ALT Sequence)* eps:ALT?
+    { yyValue = NodeFactory.mkChoice(f, r, eps!=null); }
+;
+
+/*   
+ *  Sequence :: Term+
+ */
+Sequence Sequence
+  = t:Term+
+    { yyValue = NodeFactory.mkSequence(t); }
+  ;
+
+/*   
+ *  Term = Primary | ZeroOrOne | ZeroOrMore | OneOrMore
+ */
+Term Term
+  = prim:Primary mult:[?*+]? w
+    { yyValue = NodeFactory.mkTerm(prim, mult); }
+;
+
+/*
+ *  Primary = NonTerminal | Terminal | Choice
+ */
+Primary Primary
+  = NonTerminal !DEFINES
+  / Terminal
+  / OPEN Choice CLOSE
+;
+
+/*
+ *  NonTerminal
+ */
+NonTerminal NonTerminal
+  = n:Name
+    { yyValue = NodeFactory.mkNonTerminal(n); }
+;
+
+/*
+ *  Terminal
+ */
+Terminal Terminal
+  = lit:EscapedStringLiteral w
+    { yyValue = NodeFactory.mkLiteral(lit); }
+  / LBRACK rng:( CodePointRange )+ RBRACK
+    { yyValue = NodeFactory.mkCharClass(rng); }
+  / dot:DOT
+    { yyValue = NodeFactory.mkAnyChar(dot); }
+;
+
+/*
+ *  Name = String
+ */
+String Name
+  = n:(NameStart NameRest*)
+  ;
+
+transient String NameStart
+  = [A-Za-z_]
+  / [\u00C0-\u00D6]
+  / [\u00D8-\u00F6]
+  / [\u00F8-\u01BF]
+  / [\u01C4-\u02B8]
+  / [\u037B\u037C\u037D\u0386]
+  / [\u0388-\u03FF]
+  / [\u0400-\u0482]
+  / [\u048A-\u04FF]
+  ;
+
+transient String NameRest
+  = ( NameStart
+    / [0-9]
+    / '-'
+    )+
+  ;
+
+/*
+ *  Atomic tokens
+ */
+transient void CONTINUE   = ',' w ;
+transient void DEFINES    = '=' w ;
+transient void OPEN       = '(' w ;
+transient void CLOSE      = ')' w ;
+transient void LBRACK     = '['   ;
+transient void RBRACK     = ']' w ;
+transient void PROD_SEP   = ';' w ;
+
+transient String ALT      = "|" w ;
+transient String DOT      = "." w ;
+
+
+/*
+Name and Id must be an XML conformant NCName because of their use in hyperlinks and anchors.
+(see: http://www.w3.org/TR/REC-xml-names/#NT-NCName)
+
+NameStart     ::= ":" | [A-Z] | "_" | [a-z] | [\uC0-\uD6] | [\uD8-\uF6]
+                      | [\uF8-\u2FF] | [\u370-\u37D] | [\u37F-\u1FFF] | [\u200C-\u200D]
+                      | [\u2070-\u218F] | [\u2C00-\u2FEF] | [\u3001-\uD7FF]
+                      | [\uF900-\uFDCF] | [\uFDF0-\uFFFD] | [\u10000-\uEFFFF]
+NameRest      ::= NameStart | "-" | "." | [0-9] | \uB7 | [\u0300-\u036F] | [\u203F-\u2040]
+Name          ::= NameStart (NameRest)*
+NCName        ::= Name - (Char* ':' Char*)	// An XML Name, minus the ":"
+*/

@@ -1,0 +1,151 @@
+/*
+ *   Copyright (C) 2012-2017 Christian P. Lerch, Vienna, Austria.
+ *
+ *   This file is part of DSLtools - a suite of software tools for effective
+ *   DSL implementations.
+ *
+ *   DSLtools is free software: you can use, modify and redistribute it under
+ *   the terms of the GNU General Public License version 3 as published by
+ *   the Free Software Foundation, Inc. <http://fsf.org/>
+ *
+ *   DSLtools is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *   version 3 for details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
+ *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+module PEG;
+
+import base.Spacing;    // w EOI Newline etc
+import base.Strings;    // EscapedStringLiteral CodePointRange etc
+
+header {
+import kmworks.dsltools.parser.base.*;
+import kmworks.dsltools.adt.ml.*;
+}
+
+option parser(kmworks.dsltools.parser.ml.PEG_Parser);
+
+/*
+  Grammar PEG
+  -----------
+  Based on Bryan Ford: "Parsing Expression Grammars: A Recognition-Based Syntactic Foundation"
+  Massachusetts Institute of Technology, 2004-01
+*/
+
+/*   
+ *  Grammar :: Production+
+ */
+public Grammar Start
+  = w p:Production+ EOI
+    { yyValue = NodeFactory.mkGrammar(p.list()); }
+;
+
+/*
+ *  Production :: Name Choice+
+ */
+Production Production
+  = n:Name DEFINES f:Choice r:(CONTINUE Choice)*
+    { yyValue = NodeFactory.mkProduction(n, f, r.list()); }
+;
+
+/*   
+ *  Choice :: Sequence+
+ */
+Choice Choice
+  = f:Sequence r:(ALT Sequence)*
+    { yyValue = NodeFactory.mkChoice(f, r.list()); }
+;
+
+/*   
+ *  Sequence :: PredicateOrTerm+
+ */
+Sequence Sequence
+  = t:PredicateOrTerm+
+    { yyValue = NodeFactory.mkSequence(t.list()); }
+;
+
+/*   
+ *  Term = Primary | ZeroOrOne | ZeroOrMore | OneOrMore | Predicate
+ */
+Term PredicateOrTerm 
+  = pfx:[&!]? t:Term
+    { yyValue = (pfx == null ? t : NodeFactory.mkPredicate(pfx, t)); }
+;
+    
+Term Term
+  = prim:Primary mult:[?*+]? w
+    { yyValue = NodeFactory.mkTerm(prim, mult); }
+;
+
+/*   
+ * Primary = NonTerminal | Terminal | Choice
+ */
+Primary Primary
+  = NonTerminal !DEFINES
+  / Terminal
+  / OPEN Choice CLOSE
+;
+
+/*
+ *  NonTerminal
+ */
+NonTerminal NonTerminal
+  = n:Name
+    { yyValue = NodeFactory.mkNonTerminal(n); }
+;
+
+/*
+ *  Terminal
+ */
+Terminal Terminal
+  = lit:EscapedStringLiteral w
+    { yyValue = NodeFactory.mkLiteral(lit); }
+  / <CODEPOINT_SET> LBRACK rng:( CodePointRange )+ RBRACK
+    { yyValue = NodeFactory.mkCharClass(rng.list()); }
+  / <ANY_CODEPOINT> dot:DOT
+    { yyValue = NodeFactory.mkAnyChar(dot); }
+;
+
+/*
+ *  Name = String
+ */
+String Name
+  = f:NameFirst r:NameRest w
+    { yyValue = f + r; }
+;
+transient String NameFirst
+  = [a-zA-Z_]
+;
+transient String NameRest
+  = [a-zA-Z0-9_.\-]*
+;
+
+/*
+ *  Atomic tokens
+ */
+transient void CONTINUE   = '\\' nl w ;
+transient void DEFINES    = "<-" w ;
+transient void ALT        = '/' w ;
+transient void OPEN       = '(' w ;
+transient void CLOSE      = ')' w ;
+transient void LBRACK     = '['   ;
+transient void RBRACK     = ']' w ;
+transient String DOT      = "." w ;
+
+
+/*
+Names must be a conformant XML NCName because of their use in hyperlinks and anchors.
+(see: http://www.w3.org/TR/REC-xml-names/#NT-NCName)
+
+NameStart     ::= ":" | [A-Z] | "_" | [a-z] | [\uC0-\uD6] | [\uD8-\uF6]
+                      | [\uF8-\u2FF] | [\u370-\u37D] | [\u37F-\u1FFF] | [\u200C-\u200D]
+                      | [\u2070-\u218F] | [\u2C00-\u2FEF] | [\u3001-\uD7FF]
+                      | [\uF900-\uFDCF] | [\uFDF0-\uFFFD] | [\u10000-\uEFFFF]
+NameRest      ::= NameStart | "-" | "." | [0-9] | \uB7 | [\u0300-\u036F] | [\u203F-\u2040]
+Name          ::= NameStart (NameRest)*
+NCName        ::= Name - (Char* ':' Char*)	// An XML Name, minus the ":"
+*/

@@ -1,0 +1,31 @@
+GPL2 License for the original Rats! software
+============================================
+as part of xtc - The eXTensible Compiler v2.4.0
+
+xtc - The eXTensible Compiler  
+Copyright (C) 2004-2014 Robert Grimm
+
+This program is free software; you can redistribute it and/or  
+modify it under the terms of the GNU General Public License  
+version 2 as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,  
+but WITHOUT ANY WARRANTY; without even the implied warranty of  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License  
+along with this program; if not, write to the Free Software  
+Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  
+USA.
+
+
+License for our modified version of the original Rats! software
+===============================================================
+as outlined in [ChangeLog.txt](https://github.com/km-works/kmw-rats/blob/master/ChangeLog.txt)
+and noticed in the code:
+
+Copyright (C) 2012 Christian P. Lerch. All rights reserved.
+
+The same GPL2 license as displayed above applies also to our modified version.  
+See [GPL 2.0](http://www.opensource.org/licenses/gpl-2.0.php) for a copy of the license text.

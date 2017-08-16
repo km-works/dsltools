@@ -1,0 +1,74 @@
+namespace an = "http://km-works.eu/xmlns/annotation"
+
+start = 
+	element Grammar { 
+		an.attr* &
+		productions 
+	}
+productions = production+
+production =
+	element Production {
+		an.attr* &
+		attribute name { text } &
+		choice
+	}
+sequences = sequence+
+sequence = 
+  element Sequence { 
+		an.attr* &
+		terms 
+	}
+terms = term+
+term = predicate | predicable
+predicate =
+	element Predicate {
+		an.attr* &
+		attribute type { PredicateType } &
+		predicable
+	}
+predicable = multiple | primary
+multiple =
+	element Multiple {
+		an.attr* &
+		attribute multiplicity { Multiplicity } &
+		primary
+	}
+primary = choice | nonTerminal | terminal
+choice =
+	element Choice {
+		an.attr* &
+		attribute epsilon { xsd:boolean }? &
+		sequences
+	}
+nonTerminal =
+	element NonTerminal {
+		an.attr* &
+		attribute name { text }
+	}
+terminal = anyChar | literal | charClass
+anyChar = 
+	element AnyChar { 
+		an.attr*
+  }
+literal =
+	element Literal {
+		an.attr* &
+		attribute caption { text }
+	}
+charClass =
+	element CharClass {
+		an.attr* &
+		attribute value { text } &
+		attribute caption { text } &
+		ranges
+	}
+ranges = charRange+
+charRange =
+	element CharRange {
+		an.attr* &
+		attribute first { text } &
+		attribute last { text }?
+	}
+PredicateType = "MustMatch" | "MustNotMatch"
+Multiplicity = "ZeroOrOne" | "ZeroOrMore" | "OneOrMore"
+an.attr = attribute an:* { text }

@@ -1,0 +1,16 @@
+Grammar <- Production+ EOI
+Production <- Identifier "=" Definition ( "|" Definition )* ";"
+Definition <- Term ( "," Term )*
+Term <- Factor ( "-" Factor )?
+Factor <- ( Integer "*" )? Primary
+Primary <-    OptionalSequence
+            / RepeatedSequence
+            / GroupedSequence
+            / Identifier
+            / StringLiteral
+            / SpecialSequence
+            / EmtpySequence
+OptionalSequence <- "[" Production "]"
+RepeatedSequence <- "{" Production "}"            
+GroupedSequence <- "(" Production ")"
+SpecialSequence <- "?" ( !"?" . )* "?"

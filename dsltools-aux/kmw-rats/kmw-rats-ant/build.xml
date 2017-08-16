@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="kmw-rats-ant" default="default" basedir=".">
+    <description>Builds, tests, and runs the project kmw-rats-ant.</description>
+    <import file="nbproject/build-impl.xml"/>
+
+    <property environment="env"/>
+    <target name="post-jar">
+      <echo message="Copying artifact ${dist.jar} to ${env.JAVA_LIBS}/km-works/"/>
+      <copy file="${dist.jar}" todir="${env.JAVA_LIBS}/km-works/"/>
+    </target>
+
+</project>

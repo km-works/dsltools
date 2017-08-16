@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Grammar>
+	<Production name="A">
+		<Choice>
+			<Sequence>
+				<NonTerminal name="B"/>
+				<NonTerminal name="C"/>
+				<NonTerminal name="D">
+					<annotation linebreakAfter="true"/>
+				</NonTerminal>
+				<NonTerminal name="E"/>
+				<NonTerminal name="F"/>
+				<NonTerminal name="G"/>
+			</Sequence>
+		</Choice>
+	</Production>
+	<Production name="Term">
+		<Choice>
+			<Sequence>
+				<NonTerminal name="Primary"/>
+				<Multiple multiplicity="ZeroOrOne">
+					<Choice>
+						<Sequence>
+							<NonTerminal name="OPTION"/>
+						</Sequence>
+						<Sequence>
+							<NonTerminal name="STAR"/>
+						</Sequence>
+						<Sequence>
+							<NonTerminal name="PLUS"/>
+						</Sequence>
+					</Choice>
+				</Multiple>
+			</Sequence>
+		</Choice>
+	</Production>
+	<Production name="Term">
+		<Choice>
+			<Sequence>
+				<NonTerminal name="Primary"/>
+				<Multiple multiplicity="ZeroOrOne">
+					<Choice>
+						<Sequence>
+							<NonTerminal name="OPTION"/>
+						</Sequence>
+						<Sequence>
+							<NonTerminal name="STAR">
+								<annotation linebreakBefore="true"/>
+							</NonTerminal>
+						</Sequence>
+						<Sequence>
+							<NonTerminal name="PLUS"/>
+						</Sequence>
+					</Choice>
+				</Multiple>
+			</Sequence>
+		</Choice>
+	</Production>
+</Grammar>

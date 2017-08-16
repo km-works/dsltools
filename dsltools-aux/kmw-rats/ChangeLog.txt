@@ -1,0 +1,29 @@
+Change Log
+==========
+
+vs. Contributed code base: xtc_v2.4.0-core (2014-08-17)
+    which has not changed (much) since xtc_v2.2.0-core (2011-11-19) with respect to the Rats tool.
+
+CR001 Remove all files not required by or related to the Rats! packrat parser generator itself. 
+      Remove make-files and create Ant-based Netbeans project infrastructure.
+
+CR002 Require a (statically defined, i.e. not generated) abstract class AbstractParser within 
+      same package as the generated parser class. For this purpose the later has been changed to extend AbstractParser instead of xtc.parser.ParserBase
+      This is useful for inserting a customizable class under the developers control 
+      between the generated parser class and class ParserBase provided by the Rats runtime,
+      effectively decoupling the generated parser from ParserBase.
+      Changes in: xtc.parser.CodeGenerator
+      
+CR003 Make top-level parsing methods "public final" instead of just "public"
+      Changes in: xtc.parser.CodeGenerator
+      
+CR004 Remove timestamp from from header comment of generated parser class because it forces a 
+      useless new scc version on every generation run absent substancial changes.
+
+Mavenize project.
+
+Split original codebase into generator and runtime module.
+
+Correct javadoc errors.
+
+Correct documentation errors.

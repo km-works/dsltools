@@ -1,0 +1,153 @@
+/*
+ *   Copyright (C) 2012-2017 Christian P. Lerch, Vienna, Austria.
+ *
+ *   This file is part of DSLtools - a suite of software tools for effective
+ *   DSL implementations.
+ *
+ *   DSLtools is free software: you can use, modify and redistribute it under
+ *   the terms of the GNU General Public License version 3 as published by
+ *   the Free Software Foundation, Inc. <http://fsf.org/>
+ *
+ *   DSLtools is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *   version 3 for details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
+ *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+module PEG;
+
+import base.Spacing;    // w EOI Newline etc
+import base.Strings;    // EscapedStringLiteral CodePointRange etc
+
+header {
+import kmworks.dsltools.parser.base.*;
+import kmworks.dsltools.adt.ml.*;
+}
+
+option parser(kmworks.dsltools.parser.ml.PEG_Parser_adt);
+
+/*
+  Grammar PEG
+  -----------
+  Based on Bryan Ford: "Parsing Expression Grammars: A Recognition-Based Syntactic Foundation"
+  Massachusetts Institute of Technology, 2004-01
+*/
+
+/*   
+ *    Grammar :: Production+
+ */
+public Grammar Start
+    =   w p:Production+ EOI
+        { yyValue = NodeFactory_adt.mkGrammar(p); }
+;
+
+/*
+ *    Production :: Identifier Choice
+ */
+Production Production
+    =   id:Identifier DEFINES ch:Choice
+        { yyValue = NodeFactory_adt.mkProduction(id, ch); }
+;
+
+/*
+ *  Choice :: Sequence+ EpsilonSequence?
+ */
+Choice Choice
+    =   hd:Sequence tl:NextSequence* eps:ALT?
+        { yyValue = NodeFactory_adt.mkChoice(hd, tl, eps!=null); }
+;
+
+/*
+ *    Note: LINEBREAK can be used to break a long chain of sequences into
+ *          smaller chunks and thus implementing line breaks.
+ */
+Sequence NextSequence
+    =   lb:LINEBREAK? void:ALT seq:Sequence
+        { yyValue = NodeFactory_adt.linebreakSequence(seq, lb!=null); }
+;
+
+/*   
+ *  Sequence :: Term+
+ */
+Sequence Sequence
+    =   t:Term+
+        { yyValue = NodeFactory_adt.mkSequence(t); }
+;
+
+/*   
+ *  Term :: predicate? Primary multiplicity?
+ */
+Term Term 
+    =   pre:( AND / NOT )? prim:Primary mult:( OPTION / STAR / PLUS )?
+        { yyValue = NodeFactory_adt.mkTerm(pre, prim, mult); }
+;
+    
+/*   
+ * Primary = NonTerminal | Choice | Terminal 
+ */
+Primary Primary
+    =   id:Identifier !DEFINES
+        { yyValue = NodeFactory_adt.mkNonTerminal(id); }
+      / OPEN Choice CLOSE
+      / Terminal
+;
+
+/*
+ *  Terminal
+ */
+Terminal Terminal
+  = lit:EscapedStringLiteral w
+    { yyValue = NodeFactory_adt.mkLiteral(lit); }
+  / <CODEPOINT_SET> LBRACK rng:( CodePointRange )+ RBRACK
+    { yyValue = NodeFactory_adt.mkCharClass(rng); }
+  / <ANY_CODEPOINT> DOT
+    { yyValue = NodeFactory_adt.mkAnyChar(); }
+;
+
+/*
+ *  Identifier = String
+ */
+String Identifier
+  = f:IdentFirst r:IdentRest w
+    { yyValue = f + r; }
+;
+transient String IdentFirst
+  = [a-zA-Z_]
+;
+transient String IdentRest
+  = [a-zA-Z0-9_.\-]*
+;
+
+/*
+ *  Atomic tokens
+ */
+Character LINEBREAK     = '\\' nl w ;
+Character ALT           = '/' w ;
+Character AND           = '&' w ;
+Character NOT           = '!' w ;
+Character OPTION        = '?' w ;
+Character STAR          = '*' w ;
+Character PLUS          = '+' w ;
+transient void DEFINES  = "<-" w ;
+transient void OPEN     = '(' w ;
+transient void CLOSE    = ')' w ;
+transient void LBRACK   = '['   ;
+transient void RBRACK   = ']' w ;
+transient void DOT      = '.' w ;
+
+
+/*
+Identifiers must be a conformant XML NCName because of their possible use in hyperlinks and anchors.
+(see: http://www.w3.org/TR/REC-xml-names/#NT-NCName)
+
+NameStart     ::= ":" | [A-Z] | "_" | [a-z] | [\uC0-\uD6] | [\uD8-\uF6]
+                      | [\uF8-\u2FF] | [\u370-\u37D] | [\u37F-\u1FFF] | [\u200C-\u200D]
+                      | [\u2070-\u218F] | [\u2C00-\u2FEF] | [\u3001-\uD7FF]
+                      | [\uF900-\uFDCF] | [\uFDF0-\uFFFD] | [\u10000-\uEFFFF]
+NameRest      ::= NameStart | "-" | "." | [0-9] | \uB7 | [\u0300-\u036F] | [\u203F-\u2040]
+Name          ::= NameStart (NameRest)*
+NCName        ::= Name - (Char* ':' Char*)	// An XML Name, minus the ":"
+*/

@@ -1,0 +1,32 @@
+Grammar     <- w Package ADT EOI
+
+Package     <- PKG PkgName wr
+
+ADT         <- BEGIN Name wr TypeDefs AuxDefs? END
+
+TypeDefs    <- LCURLY TypeDef+ RCURLY
+AuxDefs     <- AUX TypeDefs
+
+TypeDef     <- Name w Parameters? TypeDefs?
+
+Parameters  <- LPAREN Parameter ( COMMA Parameter )* RPAREN
+Parameter   <- Name w COLON TypeRef
+TypeRef     <- Name [?*+]? w
+
+Name        <- NameFirst NameRest
+PgkName     <- Name ( DOT Name )*
+
+NameFirst   <- [a-zA-Z]
+NameRest    <- ( NameFirst / [0-9_] )*
+
+PKG     <- "package" w
+BEGIN   <- "begin" w
+END     <- "end" w
+AUX     <- "AUX" w
+LPAREN  <- "(" w
+RPAREN  <- ")" w
+LCURLY  <- "{" w
+RCURLY  <- "}" w
+COMMA   <- "," w
+COLON   <- ":" w
+DOT     <- "."

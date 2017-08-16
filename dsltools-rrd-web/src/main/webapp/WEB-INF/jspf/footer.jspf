@@ -1,0 +1,21 @@
+<%@ page pageEncoding="UTF-8" %>
+<!-- File: /res/jspf/footer.jspf -->
+<div>
+    <hr/>
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <a href="http://www.w3.org/Graphics/SVG/"><script 
+                        type="image/svg+xml"><%@include file="svg-w3c-blue.svg" %></script></a>
+                </td>
+                <td style="text-align:right"><span style="font-size:smaller">
+                        <a href="res/terms-of-use.en.html">TERMS OF USE</a>
+                        | <a href="mailto:support@km-works.eu">HELP</a>
+                        | <a href="res/imprint.de.html">IMPRESSUM</a></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- End File: /res/jspf/footer.jspf -->

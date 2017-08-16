@@ -1,0 +1,6 @@
+Grammar       <-  w Definition+ EOI
+Definition    <-  Identifier DEFINES Expression
+Expression    <-  Sequence ( ALT Sequence )*
+Sequence      <-  PrefixTerm*
+PrefixTerm    <-  ( AND / NOT )? Term
+Term          <-  Primary ( OPTION / STAR / PLUS )?

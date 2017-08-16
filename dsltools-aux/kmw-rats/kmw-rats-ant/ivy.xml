@@ -1,0 +1,8 @@
+<ivy-module version="2.0">
+    <info organisation="km-works" module="kmw-rats-ant"/>
+    <dependencies>
+        <dependency org="org.apache.ant" name="ant" rev="1.8.4" >
+          <artifact name="ant" type="jar" />
+        </dependency>
+    </dependencies>
+</ivy-module>

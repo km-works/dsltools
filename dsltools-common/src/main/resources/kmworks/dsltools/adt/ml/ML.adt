@@ -1,0 +1,28 @@
+package kmworks.dsltools.adt.ml
+
+<ADT> ML
+
+    Grammar (productions:Production+)
+    Production (name:String, choice:Choice)
+    Sequence (terms:Term+)
+    Term {
+        Predicate (type:PredicateType, arg:Predicable)
+        Predicable {
+            Multiple (multiplicity:Multiplicity, primary:Primary)
+            Primary {
+                Choice (epsilon:Boolean, sequences:Sequence+)
+                NonTerminal (name:String)
+                Terminal {
+                    AnyChar
+                    Literal (caption:String)
+                    CharClass (value:String, caption:String, ranges:CharRange+)
+                }
+            }
+        }
+    }
+
+    <AUX>
+        CharRange (first:Character, last:Character?)
+    </AUX>
+
+</ADT>
