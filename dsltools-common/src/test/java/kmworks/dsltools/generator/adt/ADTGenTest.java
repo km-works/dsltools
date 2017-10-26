@@ -33,7 +33,7 @@ public class ADTGenTest {
     @Test
     public void testADTGen_ToXML() throws Exception {
         String parserName = "ADT";
-        File srcFile = new File("src/main/java/kmworks/dsltools/adt/ml/ML.adt");
+        File srcFile = new File("src/main/resources/kmworks/dsltools/adt/ml/ML.adt");
         Result parseResult;
         String xmlResult = "";
         try {

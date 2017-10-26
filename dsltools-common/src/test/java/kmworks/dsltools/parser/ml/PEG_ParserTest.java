@@ -27,9 +27,8 @@ import kmworks.dsltools.util.xml.XSLTransformerFactory;
 import kmworks.util.tuple.Tuple2;
 import nu.xom.Document;
 import nu.xom.Element;
-import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.Test;
 import xtc.parser.Result;
 
 
@@ -46,8 +45,13 @@ public class PEG_ParserTest {
 
     @Test
     public void test_ML_File_PEG() throws Exception {
-        Tuple2<String, String> result = ParserTestUtil.parsePEGFile(new File(TEST_FILE_DIR + "PEG.peg"));
-        assertEquals(result._1(), "(Grammar (Production @name=\"Grammar\" (Choice (Sequence (NonTerminal @name=\"w\") (Multiple @multiplicity=\"OneOrMore\" (NonTerminal @name=\"Definition\")) (NonTerminal @name=\"EOI\")))) (Production @name=\"Definition\" (Choice (Sequence (NonTerminal @name=\"Identifier\") (NonTerminal @name=\"DEFINES\") (NonTerminal @name=\"Expression\")))) (Production @name=\"Expression\" (Choice (Sequence (NonTerminal @name=\"Sequence\") (Multiple @multiplicity=\"ZeroOrMore\" (Choice (Sequence (NonTerminal @name=\"ALT\") (NonTerminal @name=\"Sequence\")))) (Multiple @multiplicity=\"ZeroOrOne\" (NonTerminal @name=\"ALT\"))))) (Production @name=\"Sequence\" (Choice (Sequence (Multiple @multiplicity=\"OneOrMore\" (NonTerminal @name=\"Term\"))))) (Production @name=\"Term\" (Choice (Sequence (Multiple @multiplicity=\"ZeroOrOne\" (Choice (Sequence (NonTerminal @name=\"AND\")) (Sequence (NonTerminal @name=\"NOT\")))) (NonTerminal @name=\"Primary\") (Choice @epsilon=\"true\" (Sequence (NonTerminal @name=\"OPTION\")) (Sequence (NonTerminal @name=\"STAR\")) (Sequence (NonTerminal @name=\"PLUS\")))))) (Production @name=\"Primary\" (Choice (Sequence (NonTerminal @name=\"Identifier\") (Predicate @type=\"MustNotMatch\" (NonTerminal @name=\"DEFINES\"))) (Sequence (NonTerminal @name=\"LPAREN\") (NonTerminal @name=\"Expression\") (NonTerminal @name=\"RPAREN\")) (Sequence (NonTerminal @name=\"Terminal\")))) (Production @name=\"Terminal\" (Choice (Sequence (NonTerminal @name=\"StringLiteral\")) (Sequence (NonTerminal @name=\"LBRACK\") (Multiple @multiplicity=\"OneOrMore\" (NonTerminal @name=\"CodePointRange\")) (NonTerminal @name=\"RBRACK\")) (Sequence (NonTerminal @name=\"DOT\")))) (Production @name=\"CodePointRange\" (Choice (Sequence (NonTerminal @name=\"CodePoint\") (Literal @caption=\"-\") (NonTerminal @name=\"CodePoint\")) (Sequence (NonTerminal @name=\"CodePoint\")))) (Production @name=\"CodePoint\" (Choice (Sequence (NonTerminal @name=\"EscapeSequence\")) (Sequence (Predicate @type=\"MustNotMatch\" (CharClass @value=\"[[\\\\\\\\], [\\\\-], [\\\\]]]\" @caption=\"[\\\\-]]\" (CharRange @first=\"\\\\\") (CharRange @first=\"-\") (CharRange @first=\"]\"))) (NonTerminal @name=\"DOT\")))) (Production @name=\"LINEBREAK\" (Choice (Sequence (Literal @caption=\"\\\\\\\\\") (NonTerminal @name=\"nl\") (NonTerminal @name=\"w\")))) (Production @name=\"DEFINES\" (Choice (Sequence (Literal @caption=\"<-\") (NonTerminal @name=\"w\")))) (Production @name=\"ALT\" (Choice (Sequence (Literal @caption=\"/\") (NonTerminal @name=\"w\")))) (Production @name=\"AND\" (Choice (Sequence (Literal @caption=\"&\") (NonTerminal @name=\"w\")))) (Production @name=\"NOT\" (Choice (Sequence (Literal @caption=\"!\") (NonTerminal @name=\"w\")))) (Production @name=\"OPTION\" (Choice (Sequence (Literal @caption=\"?\") (NonTerminal @name=\"w\")))) (Production @name=\"STAR\" (Choice (Sequence (Literal @caption=\"*\") (NonTerminal @name=\"w\")))) (Production @name=\"PLUS\" (Choice (Sequence (Literal @caption=\"+\") (NonTerminal @name=\"w\")))) (Production @name=\"LPAREN\" (Choice (Sequence (Literal @caption=\"(\") (NonTerminal @name=\"w\")))) (Production @name=\"RPAREN\" (Choice (Sequence (Literal @caption=\")\") (NonTerminal @name=\"w\")))) (Production @name=\"LBRACK\" (Choice (Sequence (Literal @caption=\"[\") (NonTerminal @name=\"w\")))) (Production @name=\"RBRACK\" (Choice (Sequence (Literal @caption=\"]\") (NonTerminal @name=\"w\")))) (Production @name=\"DOT\" (Choice (Sequence (Literal @caption=\".\") (NonTerminal @name=\"w\")))) (Production @name=\"EOI\" (Choice (Sequence (Predicate @type=\"MustNotMatch\" (AnyChar))))))");
+        String fileName = "PEG";
+        Tuple2<String, String> result = ParserTestUtil.parsePEGFile(new File(TEST_FILE_DIR + fileName + ".peg"));
+        File atdlResultFile = new File(TEST_FILE_DIR + fileName + ".ast.atdl");
+        File xmlResultFile = new File(TEST_FILE_DIR + fileName + ".ast.xml");
+        //* Files.asCharSink(atdlResultFile, StandardCharsets.UTF_8).write(result._1());  // uncomment this once whenever the AST has changed
+        //* Files.asCharSink(xmlResultFile, StandardCharsets.UTF_8).write(result._2());   // uncomment this once whenever the AST has changed
+        assertEquals(result._1(), Files.asCharSource(atdlResultFile, StandardCharsets.UTF_8).read());
     }
     
     @Test
@@ -81,9 +85,9 @@ public class PEG_ParserTest {
         Tuple2<String, String> result = ParserTestUtil.parsePEGFile(new File(TEST_FILE_DIR + "rats.peg"));
         File atdlResultFile = new File(TEST_FILE_DIR + "rats.ast.atdl");
         File xmlResultFile = new File(TEST_FILE_DIR + "rats.ast.xml");
-        Files.write(result._1(), atdlResultFile, StandardCharsets.UTF_8);  // uncomment this once when AST has changed
-        Files.write(result._2(), xmlResultFile, StandardCharsets.UTF_8);   // uncomment this once when AST has changed
-        assertEquals(result._1(), Files.toString(atdlResultFile, StandardCharsets.UTF_8));
+        //* Files.asCharSink(atdlResultFile, StandardCharsets.UTF_8).write(result._1());  // uncomment this once whenever the AST has changed
+        //* Files.asCharSink(xmlResultFile, StandardCharsets.UTF_8).write(result._2());   // uncomment this once whenever the AST has changed
+        assertEquals(result._1(), Files.asCharSource(atdlResultFile, StandardCharsets.UTF_8).read());
     }
     
     @Test
