@@ -1,7 +1,7 @@
 target/
 .idea/
-nbproject/
 *.iml
+nbproject/
 nb-configuration.xml
 *.bat
 *.xpr
