@@ -17,7 +17,7 @@ Primary         <-  Identifier !DEFINES
                     / Terminal
 
 Terminal        <-  StringLiteral
-                    / LBRACK CodePointRange+ RBRACK
+                    / LBRACK ( !RBRACK CodePointRange)+ RBRACK w
                     / DOT
 
 CodePointRange  <- CodePoint '-' CodePoint
@@ -41,8 +41,8 @@ STAR        <-  '*' w
 PLUS        <-  '+' w
 LPAREN      <-  '(' w
 RPAREN      <-  ')' w
-LBRACK      <-  '[' w
-RBRACK      <-  ']' w
+LBRACK      <-  '['
+RBRACK      <-  ']'
 DOT         <-  '.' w
 
 EOI         <-  !.

@@ -157,14 +157,19 @@ public final class PEG_Parser extends AbstractParser {
       yyError  = yyResult.select(yyError);
       if (yyResult.hasValue()) {
 
-        yyResult = pChoice(yyResult.index);
+        yyResult = pw(yyResult.index);
         yyError  = yyResult.select(yyError);
         if (yyResult.hasValue()) {
-          Element ch = yyResult.semanticValue();
 
-          yyValue = NodeFactory.mkProduction(id, ch);
+          yyResult = pChoice(yyResult.index);
+          yyError  = yyResult.select(yyError);
+          if (yyResult.hasValue()) {
+            Element ch = yyResult.semanticValue();
 
-          return yyResult.createValue(yyValue, yyError);
+            yyValue = NodeFactory.mkProduction(id, ch);
+
+            return yyResult.createValue(yyValue, yyError);
+          }
         }
       }
     }
@@ -620,7 +625,7 @@ public final class PEG_Parser extends AbstractParser {
 
     // Alternative 2.
 
-    yyResult = pOPEN(yyStart);
+    yyResult = pLPAREN(yyStart);
     yyError  = yyResult.select(yyError);
     if (yyResult.hasValue()) {
 
@@ -629,7 +634,7 @@ public final class PEG_Parser extends AbstractParser {
       if (yyResult.hasValue()) {
         yyValue = yyResult.semanticValue();
 
-        yyResult = pCLOSE(yyResult.index);
+        yyResult = pRPAREN(yyResult.index);
         yyError  = yyResult.select(yyError);
         if (yyResult.hasValue()) {
 
@@ -662,8 +667,8 @@ public final class PEG_Parser extends AbstractParser {
    * @throws IOException Signals an I/O error.
    */
   private Result pTerminal(final int yyStart) throws IOException {
-    int                yyC;
     Result             yyResult;
+    Result             yyPredResult;
     boolean            yyPredMatched;
     int                yyRepetition1;
     boolean            yyRepeated1;
@@ -701,8 +706,8 @@ public final class PEG_Parser extends AbstractParser {
 
         yyPredMatched = false;
 
-        yyC = character(yyRepetition1);
-        if (']' == yyC) {
+        yyPredResult = pRBRACK(yyRepetition1);
+        if (yyPredResult.hasValue()) {
 
           yyPredMatched = true;
         }
@@ -732,9 +737,14 @@ public final class PEG_Parser extends AbstractParser {
         yyError  = yyResult.select(yyError);
         if (yyResult.hasValue()) {
 
-          yyValue = NodeFactory.mkCharClass(rng);
+          yyResult = pw(yyResult.index);
+          yyError  = yyResult.select(yyError);
+          if (yyResult.hasValue()) {
 
-          return yyResult.createValue(yyValue, yyError);
+            yyValue = NodeFactory.mkCharClass(rng);
+
+            return yyResult.createValue(yyValue, yyError);
+          }
         }
       }
     }
@@ -1156,7 +1166,6 @@ public final class PEG_Parser extends AbstractParser {
   private Result pDEFINES(final int yyStart) throws IOException {
     int        yyC;
     int        yyIndex;
-    Result     yyResult;
     Void       yyValue;
     ParseError yyError = ParseError.DUMMY;
 
@@ -1170,14 +1179,9 @@ public final class PEG_Parser extends AbstractParser {
       if ('-' == yyC) {
         yyIndex = yyIndex + 1;
 
-        yyResult = pw(yyIndex);
-        yyError  = yyResult.select(yyError);
-        if (yyResult.hasValue()) {
+        yyValue = null;
 
-          yyValue = null;
-
-          return yyResult.createValue(yyValue, yyError);
-        }
+        return new SemanticValue(yyValue, yyIndex, yyError);
       }
     }
 
@@ -1189,13 +1193,13 @@ public final class PEG_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal PEG.OPEN.
+   * Parse nonterminal PEG.LPAREN.
    *
    * @param yyStart The index.
    * @return The result.
    * @throws IOException Signals an I/O error.
    */
-  private Result pOPEN(final int yyStart) throws IOException {
+  private Result pLPAREN(final int yyStart) throws IOException {
     int        yyC;
     int        yyIndex;
     Result     yyResult;
@@ -1219,20 +1223,20 @@ public final class PEG_Parser extends AbstractParser {
     }
 
     // Done.
-    yyError = yyError.select("OPEN expected", yyStart);
+    yyError = yyError.select("LPAREN expected", yyStart);
     return yyError;
   }
 
   // =========================================================================
 
   /**
-   * Parse nonterminal PEG.CLOSE.
+   * Parse nonterminal PEG.RPAREN.
    *
    * @param yyStart The index.
    * @return The result.
    * @throws IOException Signals an I/O error.
    */
-  private Result pCLOSE(final int yyStart) throws IOException {
+  private Result pRPAREN(final int yyStart) throws IOException {
     int        yyC;
     int        yyIndex;
     Result     yyResult;
@@ -1256,7 +1260,7 @@ public final class PEG_Parser extends AbstractParser {
     }
 
     // Done.
-    yyError = yyError.select("CLOSE expected", yyStart);
+    yyError = yyError.select("RPAREN expected", yyStart);
     return yyError;
   }
 
@@ -1303,7 +1307,6 @@ public final class PEG_Parser extends AbstractParser {
   private Result pRBRACK(final int yyStart) throws IOException {
     int        yyC;
     int        yyIndex;
-    Result     yyResult;
     Void       yyValue;
     ParseError yyError = ParseError.DUMMY;
 
@@ -1313,14 +1316,9 @@ public final class PEG_Parser extends AbstractParser {
     if (']' == yyC) {
       yyIndex = yyStart + 1;
 
-      yyResult = pw(yyIndex);
-      yyError  = yyResult.select(yyError);
-      if (yyResult.hasValue()) {
+      yyValue = null;
 
-        yyValue = null;
-
-        return yyResult.createValue(yyValue, yyError);
-      }
+      return new SemanticValue(yyValue, yyIndex, yyError);
     }
 
     // Done.
