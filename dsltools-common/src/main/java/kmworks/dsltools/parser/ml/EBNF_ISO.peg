@@ -1,0 +1,41 @@
+Grammar             <-  w Production+ EOI
+
+Production          <-  Identifier EQUALS Definition ( BAR Definition )* SEMICOLON
+
+Definition          <-  Term ( COMMA Term )*
+
+Term                <-  Factor ( MINUS Factor )?
+
+Factor              <-  ( Integer STAR )? Primary
+
+Primary             <-  OptionalSequence
+                        / RepeatedSequence
+                        / GroupedSequence
+                        / Identifier
+                        / StringLiteral
+                        / SpecialSequence
+                        / EmtpySequence
+
+OptionalSequence    <-  LBRACK Production RBRACK
+
+RepeatedSequence    <-  LCURLY Production RCURLY            
+
+GroupedSequence     <-  LPAREN Production RPAREN
+
+SpecialSequence     <-  QM ( !QM . )* QM w
+
+EQUALS      <-  '=' w
+BAR         <-  '|' w
+SEMICOLON   <-  ';' w
+COMMA       <-  ',' w
+MINUS       <-  '-' w
+STAR        <-  '*' w
+LBRACK      <-  '[' w
+RBRACK      <-  ']' w
+LCURLY      <-  '{' w
+RCURLY      <-  '}' w
+LPAREN      <-  '(' w
+RPAREN      <-  ']' w
+QM          <-  '?'
+
+EOI         <- !.

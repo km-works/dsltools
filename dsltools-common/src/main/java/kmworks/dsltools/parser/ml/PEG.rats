@@ -49,7 +49,7 @@ public Element Start
  *    Production :: Identifier Choice
  */
 Element Production
-    =   id:Identifier DEFINES ch:Choice
+    =   id:Identifier DEFINES w ch:Choice
         { yyValue = NodeFactory.mkProduction(id, ch); }
 ;
 
@@ -93,7 +93,7 @@ Element Term
 Element Primary
     =   id:Identifier !DEFINES
         { yyValue = NodeFactory.mkNonTerminal(id); }
-      / OPEN Choice CLOSE
+      / LPAREN Choice RPAREN
       / Terminal
 ;
 
@@ -103,7 +103,7 @@ Element Primary
 Element Terminal
   = lit:EscapedStringLiteral w
     { yyValue = NodeFactory.mkLiteral(lit); }
-  / <CODEPOINT_SET> LBRACK rng:( !']' CodePointRange )+ RBRACK
+  / <CODEPOINT_SET> LBRACK rng:( !RBRACK CodePointRange )+ RBRACK w
     { yyValue = NodeFactory.mkCharClass(rng); }
   / <ANY_CODEPOINT> DOT
     { yyValue = NodeFactory.mkAnyChar(); }
@@ -133,15 +133,15 @@ Character NOT           = '!' w ;
 Character OPTION        = '?' w ;
 Character STAR          = '*' w ;
 Character PLUS          = '+' w ;
-transient void DEFINES  = "<-" w ;
-transient void OPEN     = '(' w ;
-transient void CLOSE    = ')' w ;
+transient void DEFINES  = "<-"  ;
+transient void LPAREN   = '(' w ;
+transient void RPAREN    = ')' w ;
 transient void LBRACK   = '['   ;
-transient void RBRACK   = ']' w ;
+transient void RBRACK   = ']'   ;
 transient void DOT      = '.' w ;
 
 
-/*
+/* For use in HTML output (e.g. in the RRD renderer:
 Identifiers must be a conformant XML NCName because of their possible use in hyperlinks and anchors.
 (see: http://www.w3.org/TR/REC-xml-names/#NT-NCName)
 

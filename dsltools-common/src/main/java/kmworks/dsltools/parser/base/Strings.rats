@@ -38,8 +38,8 @@ public String EscapedStringLiteral
 ;
 
 private String QuotedStringLiteral 
-  = <DQ_STRING> ["] ( [\\]["\\] / !["] !InvalidStringContent _ )* ["]
-  / <SQ_STRING> ['] ( EscapeSequence / _ ) [']                  // was: ( [\\]['\\] / !['] !InvalidStringContent _ )*
+  = <DQ_STRING> ["] ( [\\]["\\] / !["] !InvalidStringContent _ )* ["] //- was: ( [\\]['\\] / !['] !InvalidStringContent _ )*
+  / <SQ_STRING> ['] ( EscapeSequence / _ ) [']
 ;
 
 private void InvalidStringContent
@@ -71,8 +71,8 @@ public String CodePoint
 ;
 
 transient String EscapeSequence
-  = '\\' [btnfr"'\-\[\\\]]
-  / UnicodeEscape
+    = '\\' [btnfr"'\-\[\\\]]
+    / UnicodeEscape
 ;
 
 transient String UnicodeEscape = '\\' 'u' HexQuad ;
