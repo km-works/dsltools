@@ -56,14 +56,12 @@ public class PEG_ParserTest {
     
     @Test
     public void test_ML_File_01() throws Exception {    
-        // src: EscapedClassChars <- [\-\[\\\]]     // == ['-','[','\\',']']
         Tuple2<String, String> result = ParserTestUtil.parsePEGFile(new File(TEST_FILE_DIR + "ML_File_01.peg"));
         assertEquals(result._1(), "(Grammar (Production @name=\"EscapedClassChars\" (Choice (Sequence (CharClass @value=\"[[\\\\-], [\\\\[], [\\\\\\\\], [\\\\]]]\" @caption=\"[-[\\\\]]\" (CharRange @first=\"-\") (CharRange @first=\"[\") (CharRange @first=\"\\\\\") (CharRange @first=\"]\"))))))");
     }
     
     @Test
     public void test_ML_File_02() throws Exception {    
-        // src: CodePoint <- EscapeSequence / ![\\\-\]] DOT
         Tuple2<String, String> result = ParserTestUtil.parsePEGFile(new File(TEST_FILE_DIR + "ML_File_02.peg"));
         assertEquals(result._1(), "(Grammar (Production @name=\"CodePoint\" (Choice (Sequence (NonTerminal @name=\"EscapeSequence\")) (Sequence (Predicate @type=\"MustNotMatch\" (CharClass @value=\"[[\\\\\\\\], [\\\\-], [\\\\]]]\" @caption=\"[\\\\-]]\" (CharRange @first=\"\\\\\") (CharRange @first=\"-\") (CharRange @first=\"]\"))) (NonTerminal @name=\"DOT\")))))");
     }
@@ -92,7 +90,6 @@ public class PEG_ParserTest {
     
     @Test
     public void test_ML_String_01() throws Exception {  
-        // string source: backslashs must be double escaped
         Tuple2<String, String> result = ParserTestUtil.parsePEGString("EscapedClassChars <- [\\-\\[\\\\\\]]");           // == ['-','[','\\',']']
         assertEquals(result._1(), "(Grammar (Production @name=\"EscapedClassChars\" (Choice (Sequence (CharClass @value=\"[[\\\\-], [\\\\[], [\\\\\\\\], [\\\\]]]\" @caption=\"[-[\\\\]]\" (CharRange @first=\"-\") (CharRange @first=\"[\") (CharRange @first=\"\\\\\") (CharRange @first=\"]\"))))))");
     }
