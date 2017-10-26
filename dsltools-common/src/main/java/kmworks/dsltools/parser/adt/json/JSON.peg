@@ -1,0 +1,43 @@
+Grammar     <-  w JsonValue EOI
+
+JsonValue   <-  JsonString
+            /   JsonBoolean
+            /   JsonNull
+            /   JsonObject
+            /   JsonArray
+            /   JsonNumber
+
+JsonObject  <-  CURLY_OPEN ObjectMap? CURLY_CLOSE w
+ObjectMap   <-  MapEntry ( COMMA MapEntry )*
+MapEntry    <-  JsonString COLON JsonValue
+
+JsonArray   <-  SQUARE_OPEN ArrayList? SQUARE_CLOSE w
+ArrayList   <-  JsonValue ( COMMA JsonValue )*
+
+JsonBoolean <-  TRUE / FALSE
+JsonNull    <-  NULL
+
+JsonString  <-  '"' StrContent '"' w
+StrContent  <-  ( LiteralChar / EscapedChar )*
+LiteralChar <-  !["\] _
+EscapedChar <-  "\" ( LiteralEsc / UnicodeEsc )
+LiteralEsc  <-  ["\/bfnrt]
+UnicodeEsc  <-  "u" HexDigit HexDigit HexDigit HexDigit
+HexDigit    <-  [0-9a-fA-F]
+
+JsonNumber  <-  "-"? Integer Fraction? Exponent? w
+Integer     <-  "0" / [1-9] [0-9]*
+Fraction    <-  "." [0-9]*
+Exponent    <-  [eE] [-+]? [0-9]+
+
+CURLY_OPEN      <-  "{" w
+CURLY_CLOSE     <-  "}" w
+SQUARE_OPEN     <-  "[" w
+SQUARE_CLOSE    <-  "]" w
+COMMA           <-  "," w
+COLON           <-  ":" w
+TRUE            <-  "true" w
+FALSE           <-  "false" w
+NULL            <-  "null" w
+
+EOI             <-  !_
