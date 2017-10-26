@@ -72,6 +72,7 @@ Element Sequence
 /*
  *    Note: LINEBREAK can be used between Terms to break a long sequence of terms into
  *          smaller chunks and thus implementing line breaks in a visual representation
+ *          of the AST
  */
 Element NextTerm
     =   t:Term lb:LINEBREAK?
