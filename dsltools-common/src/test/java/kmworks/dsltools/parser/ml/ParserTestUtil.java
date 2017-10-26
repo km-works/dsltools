@@ -21,15 +21,10 @@ package kmworks.dsltools.parser.ml;
 import java.io.File;
 import kmworks.dsltools.parser.base.ParserUtil;
 import kmworks.dsltools.util.xml.XMLtoATDL_Serializer;
-import kmworks.dsltools.util.xml.XSLTransformerFactory;
 import kmworks.util.tuple.Tuple;
 import kmworks.util.tuple.Tuple2;
 import nu.xom.Document;
 import nu.xom.Element;
-import nu.xom.Node;
-import nu.xom.Nodes;
-import nu.xom.xslt.XSLException;
-import nu.xom.xslt.XSLTransform;
 import xtc.parser.Result;
 
 /**

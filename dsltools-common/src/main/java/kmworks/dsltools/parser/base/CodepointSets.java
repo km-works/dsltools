@@ -33,8 +33,6 @@ public final class CodepointSets {
     
     private CodepointSets() {}
     
-    private static final CodepointSets INSTANCE = new CodepointSets();
-    
     private static final String MSG_MUST_NOT_BE_NULL = " must not be null";
     private static final String DEFAULT_INVALID_STRING_CHARS = "\"\\\u201c\u201d\u2028\u2029";
     
@@ -49,6 +47,11 @@ public final class CodepointSets {
      *   \u2029  PARAGRAPH SEPARATOR
      *   Set size: ~1KB
      */
+
+    private static final CodepointSets INSTANCE = new CodepointSets();
+    
+    private final Map<String, CodepointPredicate> codepointSet = new HashMap<>();
+        
     public static final CodepointPredicate DEFAULT$INVALID_STRING_CHAR_SET = 
             ((CodepointPredicate) CodepointBitSet.of(
                     CodepointSetUtil.codepointsFrom(DEFAULT_INVALID_STRING_CHARS)))
@@ -57,8 +60,6 @@ public final class CodepointSets {
                     return Character.getType(cp) == Character.CONTROL;
                 }
             });
-    
-    private final Map<String, CodepointPredicate> codepointSet = new HashMap<>();
     
     public static CodepointPredicate get(String name) {
         checkNotNull(name, "name" + MSG_MUST_NOT_BE_NULL);

@@ -33,7 +33,7 @@ import nu.xom.Text;
  * 
  * Convert an XML xom tree to an equivalent ATDL (Abstract Tree Definition Language) string
  */
-public class XMLtoATDL_Serializer {
+public final class XMLtoATDL_Serializer {
   
   private XMLtoATDL_Serializer() {}
   

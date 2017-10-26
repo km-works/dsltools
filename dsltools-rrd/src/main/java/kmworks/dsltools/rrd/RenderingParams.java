@@ -29,6 +29,10 @@ public class RenderingParams {
     private Point origin;
     private boolean reverseSequence = false;
     
+    public RenderingParams() {
+        this(new Point(0, 0));
+    }
+    
     public RenderingParams(Point origin) {
         this(origin, false);
     }

@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kmworks.dsltools.util.xml.XSLTransformerFactory;
 import nu.xom.Document;
 
@@ -45,7 +46,7 @@ public class RRD_Translator {
     private final AbstractParser parser;
     private final String source;            // source input string
     
-    private List<String> serializedParts;
+    private List<String> diagrams;
     List<String> names;
     private String error;
     private boolean isError;
@@ -55,8 +56,8 @@ public class RRD_Translator {
     private long endNanoTime;
 
     public RRD_Translator(String language, String source) {
-        this.parser = ParserFactory.newParser(language, new StringReader(source));
         this.source = source.trim();
+        this.parser = ParserFactory.newParser(language, new StringReader(this.source));
     }
 
     public void translate() {
@@ -65,8 +66,7 @@ public class RRD_Translator {
         try {
             Result parseResult = parser.parse();
             if (parseResult != null) {
-                if (parseResult.hasValue()) {
-                    
+                if (parseResult.hasValue()) {                    
                     Document xmlAST = new Document((Element)parseResult.semanticValue());
                     xmlAST = XSLTransformerFactory.doTransform(xmlAST, "ML-canonical");
 
@@ -74,14 +74,14 @@ public class RRD_Translator {
 
                     SVGRenderer renderer = new SVGRenderer(PropertiesManager.getOptionsAsMap());
                     SVGRenderingVisitor visitor = new SVGRenderingVisitor(renderer);
-                    rrdAST.accept(visitor, new RenderingParams(new Point(0, 0)));
+                    rrdAST.accept(visitor, new RenderingParams());
 
                     names = renderer.getNames();
-                    List<Element> parts = renderer.getParts();
-                    serializedParts = new ArrayList<>(parts.size());
-                    for (Element part : parts) {
-                        serializedParts.add(serialize(part));
-                    }
+                    
+                    diagrams = renderer.getParts().stream()
+                            .map(e -> serialize(e))
+                            .collect(Collectors.toList());
+                    
                     isError = false;
                 } else {
                     error = parser.fmtErrorMsg(source, parseResult.parseError());
@@ -104,7 +104,7 @@ public class RRD_Translator {
     }
     
     public List<String> getResult() {
-        return serializedParts;
+        return diagrams;
     }
 
     public String getError() {
