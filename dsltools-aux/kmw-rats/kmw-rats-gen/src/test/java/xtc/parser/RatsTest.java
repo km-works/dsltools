@@ -19,7 +19,8 @@ public class RatsTest {
   public RatsTest() {
   }
 
-  // The following test case just documents how to execute the Rats parser generator tool
+  // The following test case template should document how to execute the Rats parser generator tool
+  // from any Java program (or from the commandline).
   // You must fill-in real file paths, before using it
   @Test @Ignore
   public void testMain() {
@@ -30,9 +31,9 @@ public class RatsTest {
     String[] args = new String[] { 
       "-no-exit",     // MUST use this!
       "-verbose",     // optional
-      "-in",          // main module dir
+      "-in",          // main grammar module dir
       srcDir.getAbsolutePath(),
-      "-in",          // top-level dir
+      "-in",          // top-level dir for grammar modules (opt)
       modDir.getAbsolutePath(),
       "-out",         // where to write the generated parser; must be consistent with package name
       srcDir.getAbsolutePath(),
