@@ -74,9 +74,9 @@
            Alternatively you can use the [Sample] buttons to paste a sample grammar for the respective language into the text box.</p>
         <form id="form0" action="index.jsp" method="post" accept-charset="UTF-8">
           <p>Choose input language:<br/>
-            <input type="radio" name="language" id="EBNF_W3C-lang" value="EBNF_W3C" <%= ebnfChecked %> /> 
+            <!--input type="radio" name="language" id="EBNF_W3C-lang" value="EBNF_W3C" <%= ebnfChecked %> /> 
             <a href="#" title="EBNF_W3C Help">EBNF - W3C Dialect</a> 
-            <input type="button" value="Sample" onclick="pasteSample('EBNF_W3C')"/><br/>
+            <input type="button" value="Sample" onclick="pasteSample('EBNF_W3C')"/><br/-->
             <input type="radio" name="language" id="PEG-lang" value="PEG" <%= pegChecked %> /> 
             <a href="#" title="PEG Help">Parser Expression Grammar (PEG)</a> 
             <input type="button" value="Sample" onclick="pasteSample('PEG')"/><br/>
@@ -132,7 +132,7 @@ Grammar = Production { Production } ;
  * A (partial) grammar of the PEG language, as supported by this tool - expressed in its own syntax
  */
 Grammar     &lt;-  w Definition+ EOI
-Definition  &lt;-  Identifier DEFINES Expression
+Definition  &lt;-  Identifier DEFINES w Expression
 Expression  &lt;-  Sequence (ALT Sequence)* ALT?
 Sequence    &lt;-  Term+
 Term        &lt;-  ( AND / NOT )? Primary ( OPTION / STAR / PLUS / )
@@ -140,7 +140,7 @@ Primary     &lt;-  Identifier !DEFINES / LPAREN Expression RPAREN / Terminal
 Terminal    &lt;-  StringLiteral / LBRACK CodePointRange+ RBRACK / DOT
 CodePointRange &lt;- CodePoint '-' CodePoint / CodePoint
 CodePoint   &lt;-  EscapeSequence / ![\\\-\]] DOT
-DEFINES     &lt;- "&lt;-" w
+DEFINES     &lt;- "&lt;-"
 ALT         &lt;- '/' w
 AND         &lt;- '&' w
 NOT         &lt;- '!' w
