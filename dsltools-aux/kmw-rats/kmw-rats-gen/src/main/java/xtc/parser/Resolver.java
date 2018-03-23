@@ -858,6 +858,7 @@ public class Resolver extends Visitor {
               (! Constants.ATT_IGNORING_CASE.equals(att)) &&
               (! Constants.ATT_STATEFUL.getName().equals(name)) &&
               (! Constants.NAME_PARSER.equals(name)) &&
+              (! Constants.NAME_PARENT.equals(name)) &&     ///++
               (! Constants.NAME_MAIN.equals(name)) &&
               (! Constants.NAME_PRINTER.equals(name)) &&
               (! Constants.NAME_VISIBILITY.equals(name)) &&
@@ -910,6 +911,8 @@ public class Resolver extends Visitor {
             } else if (((String)value).startsWith("\"")) {
               runtime.error("parser attribute with invalid value", att);
             }
+            
+          // TODO: validate NAME_PARENT <CR005>
             
           } else if (Constants.NAME_MAIN.equals(name)) {
             if (runtime.test("optionLGPL")) {

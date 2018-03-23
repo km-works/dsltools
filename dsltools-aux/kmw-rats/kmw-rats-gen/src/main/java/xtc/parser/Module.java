@@ -148,4 +148,11 @@ public class Module extends Node {
     return null == att ? name.name : (String)att.getValue();
   }
 
+///+ <CR005>
+  public String getParentClassName() {
+    Attribute att = Attribute.get(Constants.NAME_PARENT, attributes);
+    return null == att ? "AbstractParser" : (String)att.getValue();
+  }
+///+ </CR005>
+
 }

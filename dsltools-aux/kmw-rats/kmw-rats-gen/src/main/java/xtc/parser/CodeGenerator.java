@@ -1294,7 +1294,8 @@ public class CodeGenerator extends Visitor {
             printer.p("public ");
         }
 ///- <CR002/>  printer.p("final class ").p(className).pln(" extends ParserBase {").incr().pln();
-        printer.p("final class ").p(className).pln(" extends AbstractParser {").incr().pln(); ///+ <CR002/>
+///- <CR005/>  printer.p("final class ").p(className).pln(" extends AbstractParser {").incr().pln(); ///+ <CR002/>
+        printer.pln(String.format("final class %s extends %s {", className, m.getParentClassName())).incr().pln();  ///+ <CR005/>
 
         // Emit debug flag.
         if (isVerbose) {

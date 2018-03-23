@@ -19,6 +19,8 @@ CR003 Make top-level parsing methods "public final" instead of just "public"
       
 CR004 Remove timestamp from from header comment of generated parser class because it forces a 
       useless new scc version on every generation run absent substancial changes.
+	  
+CR005 Allow the specification of a parser's superclass with the new grammar-wide attribute "parent"
 
 Mavenize project.
 
