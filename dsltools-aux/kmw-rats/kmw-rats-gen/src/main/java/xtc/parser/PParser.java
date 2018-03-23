@@ -96,17 +96,6 @@ public final class PParser extends ParserBase  {
   /**
    * Create a new packrat parser.
    *
-   * @param reader The reader.
-   * @param file The file name.
-   */
-  public PParser(final Reader reader, final String file) {
-    super(reader, file);
-    yyState = new PParserState();
-  }
-
-  /**
-   * Create a new packrat parser.
-   *
    * @param reader The file reader.
    * @param file The file name.
    * @param size The file size.

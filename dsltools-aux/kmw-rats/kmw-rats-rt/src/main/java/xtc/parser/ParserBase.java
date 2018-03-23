@@ -90,39 +90,21 @@ public abstract class ParserBase {
     /**
      * Create a new parser base.
      *
-     * @param reader The reader for the character stream to be parsed.
-     * @param file The name of the file backing the character stream.
-     * @throws NullPointerException Signals a null file name.
-     */
-    public ParserBase(final Reader reader, final String file) {
-        this(reader, file, INIT_SIZE - 1);
-    }
-
-    /**
-     * Create a new parser base.
-     *
-     * @param reader The reader for the character stream to be parsed.
-     * @param file The name of the file backing the character stream.
-     * @param size The length of the character stream.
-     * @throws NullPointerException Signals a null file name.
-     * @throws IllegalArgumentException Signals a negative file size.
+     * @param reader The reader for the source character stream to be parsed.
+     * @param file The name of the file backing the source character stream, null or blank for dont-care filename.
+     * @param size The estimated length of the source character stream, 0 for unknown length.
      */
     public ParserBase(final Reader reader, final String file, final int size) {
-        if (null == file) {
-            throw new NullPointerException("Null file");
-        }
-        if (size < 0) {
-            throw new IllegalArgumentException("Negative size: " + size);
-        }
+        final int intialSize = size <= 0 ? INIT_SIZE - 1 : size;
 
         yyReader = reader;
         yyCount = 0;
         yyEOF = false;
-        yyData = new char[size + 1];
-        yyColumns = new Column[size + 1];
+        yyData = new char[intialSize + 1];
+        yyColumns = new Column[intialSize + 1];
 
-        Column c = newColumn();
-        c.file = file;
+        final Column c = newColumn();
+        c.file = file == null ? "" : file;
         c.seenCR = false;
         c.line = FIRST_LINE;
         c.column = FIRST_COLUMN;
