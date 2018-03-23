@@ -25,6 +25,7 @@ import xtc.parser.Result;
 
 import java.io.IOException;
 import java.io.Reader;
+import kmworks.util.StringEscapeUtil;
 import kmworks.util.cp.CodepointPredicate;
 
 /**
@@ -42,24 +43,24 @@ public abstract class AbstractParser extends ParserBase {
 
 //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
-     * Create a new packrat parser.
+     * Create a new Rats! parser.
      *
-     * @param reader The reader.
-     * @param file The file name.
+     * @param reader The source reader.
+     * @param fileName The name of the source file (may be blank).
      */
-    public AbstractParser(final Reader reader, final String file) {
-        super(reader, file);
+    public AbstractParser(final Reader reader, final String fileName) {
+        this(reader, fileName, 0);
     }
 
     /**
-     * Create a new packrat parser.
+     * Create a new Rats! parser.
      *
-     * @param reader The file reader.
-     * @param file The file name.
-     * @param size The file size.
+     * @param reader The source reader.
+     * @param fileName The name of the source file (may be blank).
+     * @param size The number of characters to be parsed.
      */
-    public AbstractParser(final Reader reader, final String file, final int size) {
-        super(reader, file, size);
+    public AbstractParser(final Reader reader, final String fileName, final int size) {
+        super(reader, fileName, size);
     }
 
 //</editor-fold>
@@ -109,7 +110,7 @@ public abstract class AbstractParser extends ParserBase {
     //
     
     protected String unescape(String s) {
-        return StringUtil.unescapeJava(s);
+        return StringEscapeUtil.unescapeJava(s);
     }
 
     public String fmtErrorMsg(String source, ParseError error) {
