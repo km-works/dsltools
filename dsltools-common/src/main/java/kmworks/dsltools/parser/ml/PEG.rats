@@ -14,8 +14,7 @@
  *   version 3 for details.
  *
  *   You should have received a copy of the GNU General Public License along
- *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
- *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ *   with this distribution. If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
 module PEG;
 
@@ -28,7 +27,7 @@ import kmworks.dsltools.parser.base.*;
 import nu.xom.Element;
 }
 
-option parser(kmworks.dsltools.parser.ml.PEG_Parser);
+option parser(kmworks.dsltools.parser.ml.PEG_Parser);   // , parent(kmworks.dsltools.parser.base.AbstractParser)
 
 /*
   Grammar PEG
