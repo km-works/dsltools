@@ -6,25 +6,18 @@
 
     <parent>
         <groupId>eu.km-works.dsltools</groupId>
-        <artifactId>dsltools-pom</artifactId>
-        <version>1.0.0</version>
+        <artifactId>kmw-dsltools-pom</artifactId>
+        <version>2.0.0</version>
     </parent>
         
     <artifactId>dsltools-common</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
     
     <dependencies>
         <dependency>
-            <groupId>org.immutables</groupId>
-            <artifactId>value</artifactId>
-            <version>2.4.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>eu.km-works.utils</groupId>
             <artifactId>utils-core</artifactId>
-            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>eu.km-works.utils</groupId>
@@ -32,30 +25,37 @@
             <version>2.0.0</version>
         </dependency>
         <dependency>
+            <groupId>eu.km-works.utils</groupId>
+            <artifactId>utils-xml</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>kmw-rats-gen</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>kmw-rats-rt</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <version>2.5.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>2.3.25-incubating</version>
+            <version>2.3.27-incubating</version>
             <exclusions>
                 <exclusion>
                     <artifactId>xml-apis</artifactId>
                     <groupId>xml-apis</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>kmw-rats-gen</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.km-works.utils</groupId>
-            <artifactId>kmw-xml-xom</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.km-works.utils</groupId>
-            <artifactId>kmw-xml-jing</artifactId>
-            <version>1.0.0</version>
         </dependency>
     </dependencies>
     

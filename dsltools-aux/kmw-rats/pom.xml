@@ -10,11 +10,11 @@
     <parent>
         <groupId>eu.km-works.dsltools</groupId>
         <artifactId>dsltools-aux</artifactId>
-        <version>1.0.0</version>
+        <version>2.0.0</version>
     </parent>
     
     <artifactId>kmw-rats</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -27,7 +27,6 @@
             <plugin>            
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
                 <configuration>
                     <docfilessubdirs>true</docfilessubdirs>
                 </configuration>
@@ -43,7 +42,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
                 <configuration></configuration>
                 <executions>
                     <execution>
