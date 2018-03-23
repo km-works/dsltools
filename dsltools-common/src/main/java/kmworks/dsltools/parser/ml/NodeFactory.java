@@ -19,10 +19,10 @@
 package kmworks.dsltools.parser.ml;
 
 import java.util.List;
-import kmworks.dsltools.adt.base.PredicateType;
 import kmworks.dsltools.adt.base.Multiplicity;
+import kmworks.dsltools.adt.base.PredicateType;
 import kmworks.dsltools.util.xml.Namespaces;
-import kmworks.util.StringUtil;
+import kmworks.util.StringEscapeUtil;
 import nu.xom.Attribute;
 import nu.xom.Element;
 import xtc.util.Pair;
@@ -145,12 +145,12 @@ public class NodeFactory {
         Element result = mkElem("CharClass");
         StringBuilder sb = new StringBuilder("[");
         for (List<String> range : rangeList) {
-            final char ch1 = StringUtil.unescapeJava(range.get(0)).charAt(0);
+            final char ch1 = StringEscapeUtil.unescapeJava(range.get(0)).charAt(0);
             sb.append(ch1);
             if (range.size() == 1) {
                 result.appendChild(mkCharRange(ch1, ch1));
             } else /* (range.size() == 2) */ {
-                final char ch2 = StringUtil.unescapeJava(range.get(1)).charAt(0);
+                final char ch2 = StringEscapeUtil.unescapeJava(range.get(1)).charAt(0);
                 result.appendChild(mkCharRange(ch1, ch2));
                 sb.append('-').append(ch2);
             }

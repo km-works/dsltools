@@ -19,7 +19,7 @@
  */
 package kmworks.dsltools.util.xml;
 
-import kmworks.util.StringUtil;
+import kmworks.util.StringEscapeUtil;
 import nu.xom.Attribute;
 import nu.xom.Element;
 import nu.xom.Node;
@@ -45,14 +45,14 @@ public final class XMLtoATDL_Serializer {
     for (int i=0; i<node.getAttributeCount(); i++) {
       Attribute attr = node.getAttribute(i);
       sb.append(" @").append(attr.getQualifiedName());
-      sb.append("=\"").append(StringUtil.escapeJava(attr.getValue())).append('"');
+      sb.append("=\"").append(StringEscapeUtil.escapeJava(attr.getValue())).append('"');
     }
     for (int i=0; i<node.getChildCount(); i++) {
       Node child = node.getChild(i);
       if (child instanceof Element) {
         sb.append(' ').append(write((Element) child));
       } else if (child instanceof Text) {
-        sb.append(" \"").append(StringUtil.escapeJava(((Text) child).getValue())).append('"');
+        sb.append(" \"").append(StringEscapeUtil.escapeJava(((Text) child).getValue())).append('"');
       }
     }
     sb.append(')');

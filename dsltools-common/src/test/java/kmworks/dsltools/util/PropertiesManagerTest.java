@@ -5,11 +5,9 @@
  */
 package kmworks.dsltools.util;
 
+import kmworks.util.config.PropertyMap;
+import static org.junit.Assert.*;
 import org.junit.Test;
-
-import java.util.Properties;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -22,8 +20,9 @@ public class PropertiesManagerTest {
 
     @Test
     public void testPropertiesLoader() {
-        Properties props = PropertiesManager.getOptions();
-        assertNotNull(props);
+        PropertyMap options = PropertiesManager.getOptions();
+        assertNotNull(options);
+        assertFalse(options.isEmpty());
     }
     
 }

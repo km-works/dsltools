@@ -38,7 +38,7 @@ public final class CodepointSets {
     
     /**  Default Invalid String Characters.
      *   A parsed string literal should not contain any control characters less \u0020 nor
-     *   any of the following characters:
+     *   any of the following characters unescaped:
      *   \u0022  QUOTATION MARK (")
      *   \u005c  REVERSE SOLIDUS (\)
      *   \u201c  LEFT DOUBLE QUOTATION MARK

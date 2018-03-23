@@ -18,12 +18,11 @@
  */
 package kmworks.dsltools.rrd;
 
-import com.google.common.collect.Maps;
 import java.util.List;
-import java.util.Map;
+import kmworks.util.config.PropertyMap;
 import nu.xom.Element;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
@@ -36,7 +35,7 @@ public class SVGRendererTest {
 
     @Test
     public void testSvgRootElement() {
-        Map<String,String> opts = Maps.newHashMap();
+        PropertyMap opts = PropertyMap.of();
         SVGRenderer renderer = new SVGRenderer(opts);
         renderer.beginSVGElement(100, 100);
         List<Element> result = renderer.getParts();

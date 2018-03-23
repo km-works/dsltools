@@ -21,8 +21,9 @@ package kmworks.dsltools.util;
 
 import com.google.common.io.Resources;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Properties;
+import kmworks.util.config.PropertyMap;
+import kmworks.util.config.PropertyMapConverter;
 
 /**
  *
@@ -34,22 +35,19 @@ public class PropertiesManager {
 
     private static final PropertiesManager INSTANCE = new PropertiesManager();
 
-    private Properties rrdOptions = new Properties();
+    private PropertyMap rrdOptions;
 
     private PropertiesManager() {
         try (final InputStream stream = Resources.getResource("rrd.properties").openStream()) {
-            rrdOptions.load(stream);
+            Properties properties = new Properties();
+            properties.load(stream);
+            rrdOptions = PropertyMapConverter.fromProperties(properties);
         } catch (Exception ex) {
-            System.out.println(ex);
         }
     }
     
-    public static Properties getOptions() {
+    public static PropertyMap getOptions() {
         return INSTANCE.rrdOptions;
     }
     
-    public static Map<String,String> getOptionsAsMap() {
-        return (Map<String,String>)(Map<?,?>)INSTANCE.rrdOptions;
-    }
-
 }

@@ -18,22 +18,19 @@
  */
 package kmworks.dsltools.rrd;
 
-import kmworks.dsltools.parser.base.ParserFactory;
-import kmworks.dsltools.parser.base.AbstractParser;
-import kmworks.dsltools.util.PropertiesManager;
-import nu.xom.Element;
-import nu.xom.canonical.Canonicalizer;
-import xtc.parser.Result;
-
-import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import kmworks.dsltools.parser.base.AbstractParser;
+import kmworks.dsltools.parser.base.ParserFactory;
+import kmworks.dsltools.util.PropertiesManager;
 import kmworks.dsltools.util.xml.XSLTransformerFactory;
 import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.canonical.Canonicalizer;
+import xtc.parser.Result;
 
 /**
  *
@@ -72,7 +69,7 @@ public class RRD_Translator {
 
                     ElementNode rrdAST = new XMLtoRRD_Transformer().transform(xmlAST.getRootElement());
 
-                    SVGRenderer renderer = new SVGRenderer(PropertiesManager.getOptionsAsMap());
+                    SVGRenderer renderer = new SVGRenderer(PropertiesManager.getOptions());
                     SVGRenderingVisitor visitor = new SVGRenderingVisitor(renderer);
                     rrdAST.accept(visitor, new RenderingParams());
 
