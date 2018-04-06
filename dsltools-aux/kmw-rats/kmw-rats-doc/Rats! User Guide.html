@@ -13,12 +13,12 @@
       formalism described in Brian Ford's <a  href="http://www.brynosaurus.com/pub/lang/peg.pdf">Parsing
         Expression Grammars</a> paper. However, since <i>Rats!</i> produces
       working parsers, the syntax of <i>Rats!</i> grammars is somewhat
-      different from and more expressive than the PEG syntax described in the
+      different from and more expressive than the PEG syntax described in this
       paper. Additionally, to make grammars more easily reusable and extensible,
       <i>Rats</i> organizes grammar fragments into modules. A good starting
       point for learning how to use <i>Rats!</i>, in addition to this
-      introduction, are <i>Rats!</i>' own grammar in package <code>xtc.parser</code>
-      and the C and Java grammars in package <code>xtc.lang</code>. </p>
+      introduction, are <i>Rats!</i>' own grammar in package <code>xtc.parser</code><code></code>.
+    </p>
     <p>The rest of this document covers the following topics:</p>
     <ul>
       <li><a  href="#syntax">Syntax</a></li>
@@ -171,11 +171,11 @@ EOF           &lt;- !.
       expressions and operators necessary for generating actual parsers. Most
       importantly, <i>Rats!</i> grammars include <i>actions</i> that generate
       semantic values. Actions are surrounded by curly brackets <code>{}</code>,
-      just like blocks of code in C, C++, or Java. To access such semantic
-      values, <i>Rats!</i> grammars can also include <i>bindings</i>. Bindings
-      first specify the variable name, followed by a colon <code>:</code>, and
-      then the expression to be bound. Additionally, <i>Rats!</i> grammars
-      support <i>semantic predicates</i>, which are denoted by the and <code>&amp;</code>
+      just like blocks of code in Java. To access such semantic values, <i>Rats!</i>
+      grammars can also include <i>bindings</i>. Bindings first specify the
+      variable name, followed by a colon <code>:</code>, and then the
+      expression to be bound. Additionally, <i>Rats!</i> grammars support <i>semantic
+        predicates</i>, which are denoted by the and <code>&amp;</code>
       operator directly followed by an action (which must be an expression
       evaluating to a boolean value). Furthermore, <i>Rats!</i> grammars
       support <i>text matching expressions</i>, which first specify the text to
@@ -198,18 +198,17 @@ EOF           &lt;- !.
     <p>Other differences between PEGs and <i>Rats!</i> grammars include that,
       as already mentioned <i>Rats!</i> uses an underscore '<code>_</code>' as
       the any character constant, while PEGs use a dot '<code>.</code>'.
-      Furthermore, <i>Rats!</i>, just like C/C++/Java, requires that
-      single-quoted literals specify exactly one character, while double-quoted
-      literals may specify an arbitrary number of characters. Escape sequences
-      include basic C/C++/Java escapes such as '<code>\n</code>' and '<code>\\</code>',
-      Java Unicode escapes such as '<code>\u00ff</code>', and '<code>\[</code>',
-      '<code>\-</code>', and '<code>\]</code>' for character class
-      specifications. <i>Rats!</i> grammars also use standard C/C++/Java
-      comments. Note that, while <i>Rats!</i> supports Unicode, it only
-      supports 16 bit characters in the basic multilingual plane (i.e., with
-      code points between U+0000 and U+FFFF). Expressions recognizing
-      supplementary characters (i.e., with code points between U+10000 and
-      U+10FFFF) need to use <a  href="http://java.sun.com/developer/technicalArticles/Intl/Supplementary/">Java's
+      Furthermore, <i>Rats!</i>, just like Java, requires that single-quoted
+      literals specify exactly one character, while double-quoted literals may
+      specify an arbitrary number of characters. Escape sequences include basic
+      Java escapes such as '<code>\n</code>' and '<code>\\</code>', Java Unicode
+      escapes such as '<code>\u00ff</code>', and '<code>\[</code>', '<code>\-</code>',
+      and '<code>\]</code>' for character class specifications. <i>Rats!</i>
+      grammars also use standard Java comments. Note that, while <i>Rats!</i>
+      supports Unicode, it only supports 16 bit characters in the basic
+      multilingual plane (i.e., with code points between U+0000 and U+FFFF).
+      Expressions recognizing supplementary characters (i.e., with code points
+      between U+10000 and U+10FFFF) need to use <a  href="http://java.sun.com/developer/technicalArticles/Intl/Supplementary/">Java's
         encoding</a> as a pair of <code>char</code> values in the surrogates
       range.</p>
     <h3  id="modules">Grammar Modules</h3>
