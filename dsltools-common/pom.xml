@@ -108,8 +108,8 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    <!--execution>
-                        <id>gen_EBNF_W3C</id>
+                    <execution>
+                        <id>gen_GenericModulesTest</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>java</goal>
@@ -118,17 +118,17 @@
                             <mainClass>xtc.parser.Rats</mainClass>
                             <arguments>
                                 <argument>-no-exit</argument>
-                                <argument>-verbose</argument>
+                                <!--argument>-verbose</argument-->
                                 <argument>-in</argument>
-                                <argument>${rats.root.dir}/ml</argument>
+                                <argument>${rats.test.dir}/test</argument>
                                 <argument>-in</argument>
                                 <argument>${rats.root.dir}</argument>
                                 <argument>-out</argument>
-                                <argument>${rats.root.dir}/ml</argument>
-                                <argument>${rats.root.dir}/ml/EBNF_W3C.rats</argument>
+                                <argument>${rats.test.dir}/test</argument>
+                                <argument>${rats.test.dir}/test/GenericModulesTest.rats</argument>
                             </arguments>
                         </configuration>
-                    </execution-->                
+                    </execution>
                 </executions>
             </plugin>        
         </plugins>
@@ -136,5 +136,6 @@
   
     <properties>
         <rats.root.dir>${project.build.sourceDirectory}/kmworks/dsltools/parser</rats.root.dir>
+        <rats.test.dir>${project.build.testSourceDirectory}/kmworks/dsltools/parser</rats.test.dir>
     </properties>
 </project>

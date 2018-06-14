@@ -19,10 +19,10 @@
 package kmworks.dsltools.parser.ml;
 
 import java.util.List;
-import kmworks.dsltools.adt.base.Multiplicity;
-import kmworks.dsltools.adt.base.PredicateType;
+import kmworks.dsltools.ast.base.Multiplicity;
+import kmworks.dsltools.ast.base.PredicateType;
 import kmworks.dsltools.util.xml.Namespaces;
-import kmworks.util.StringEscapeUtil;
+import kmworks.util.strings.StringEscapeUtil;
 import nu.xom.Attribute;
 import nu.xom.Element;
 import xtc.util.Pair;
@@ -30,7 +30,9 @@ import xtc.util.Pair;
 /**
  * Created by cpl on 18.03.2017.
  */
-public class NodeFactory {
+public final class NodeFactory {
+
+    private NodeFactory() {}
     
     public static Element mkGrammar(Pair<Element> productions) {
         Element result = mkElem("Grammar");
@@ -141,23 +143,23 @@ public class NodeFactory {
         return mkElem("AnyChar");
     }
 
-    public static Element mkCharClass(Pair<List<String>> rangeList) {
+    public static Element mkCharClass(Pair<List<Character>> rangeList) {
         Element result = mkElem("CharClass");
-        StringBuilder sb = new StringBuilder("[");
-        for (List<String> range : rangeList) {
-            final char ch1 = StringEscapeUtil.unescapeJava(range.get(0)).charAt(0);
+        StringBuilder sb = new StringBuilder();
+        for (List<Character> range : rangeList) {
+            final char ch1 = range.get(0);
             sb.append(ch1);
             if (range.size() == 1) {
                 result.appendChild(mkCharRange(ch1, ch1));
             } else /* (range.size() == 2) */ {
-                final char ch2 = StringEscapeUtil.unescapeJava(range.get(1)).charAt(0);
+                final char ch2 = range.get(1);
                 result.appendChild(mkCharRange(ch1, ch2));
                 sb.append('-').append(ch2);
             }
         }
-        String value = rangeList.list().toString();
-        result.addAttribute(mkAttr("value", value));
-        result.addAttribute(mkAttr("caption", sb.append(']').toString()));
+        //- String value = rangeList.list().toString();
+        //- result.addAttribute(mkAttr("value", value));
+        result.addAttribute(mkAttr("caption", sb.toString()));
         return result;
     }
     
@@ -176,23 +178,39 @@ public class NodeFactory {
     private static Element mkElem(String name) {
         return new Element(name);
     }
-    
-    private static Attribute mkAttr(String name, String value) {
-        return new Attribute(name, value);
-    }
-    
+
     private static Attribute mkAttr(String name, char value) {
-        return new Attribute(name, Character.toString(value));
+        return mkAttr(name, Character.toString(value));
+    }
+
+    private static Attribute mkAttr(String name, String value) {
+        return new Attribute(name, StringEscapeUtil.escapeXml11(value));
     }
     
     private static Attribute mkAnnotationAttr(String name, String value) {
-        return new Attribute(Namespaces.AN_PREFIX + ":" + name, Namespaces.AN_URI, value, Attribute.Type.CDATA);
+        return new Attribute(Namespaces.AN_PREFIX + ":" + name,
+                Namespaces.AN_URI, StringEscapeUtil.escapeXml11(value), Attribute.Type.CDATA);
     }
     
     private static void appendAll(Element result, Pair<Element> children) {
         for (Element child : children) {
             result.appendChild(child);
         }
+    }
+
+    private static String escaped(String s) {
+        final StringBuilder sb = new StringBuilder();
+        for (char ch : s.toCharArray()) {
+            sb.append(escaped(ch));
+        }
+        return sb.toString();
+    }
+    private static String escaped(char ch) {
+        String chString = Character.toString(ch);
+        if (ch < ' ' || Character.isISOControl(ch))
+            return StringEscapeUtil.escapeJava(chString);
+        else
+            return chString;
     }
 
 }

@@ -19,12 +19,12 @@
  */
 module PEG;
 
-import base.Spacing;    // w EOI Newline etc
-import base.Strings;    // EscapedStringLiteral CodePointRange etc
+import base.GenericSpacing;         // w EOI Newline etc
+import base.GenericStringLiteral;   // StringLiteral
 
 header {
 import kmworks.dsltools.parser.base.*;
-import kmworks.dsltools.adt.ml.*;
+import kmworks.dsltools.ast.ml.*;
 }
 
 option parser(kmworks.dsltools.parser.ml.PEG_Parser_adt);

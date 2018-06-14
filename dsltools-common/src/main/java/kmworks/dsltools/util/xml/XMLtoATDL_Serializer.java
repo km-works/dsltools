@@ -19,43 +19,82 @@
  */
 package kmworks.dsltools.util.xml;
 
-import kmworks.util.StringEscapeUtil;
+import kmworks.util.strings.StringEscapeUtil;
 import nu.xom.Attribute;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Text;
 
 /**
- *
  * @author Christian P. Lerch
  * @version 1.0.0
  * @since 1.0
- * 
- * Convert an XML xom tree to an equivalent ATDL (Abstract Tree Definition Language) string
+ * <p>
+ * Convert an XML xom tree to an equivalent ATDL (Abstract Tree Description Language) string
  */
 public final class XMLtoATDL_Serializer {
-  
-  private XMLtoATDL_Serializer() {}
-  
-  public static String write(Element node) {
-    
-    StringBuilder sb = new StringBuilder();
-    sb.append('(').append(node.getQualifiedName());
-    
-    for (int i=0; i<node.getAttributeCount(); i++) {
-      Attribute attr = node.getAttribute(i);
-      sb.append(" @").append(attr.getQualifiedName());
-      sb.append("=\"").append(StringEscapeUtil.escapeJava(attr.getValue())).append('"');
+
+    private XMLtoATDL_Serializer() {
     }
-    for (int i=0; i<node.getChildCount(); i++) {
-      Node child = node.getChild(i);
-      if (child instanceof Element) {
-        sb.append(' ').append(write((Element) child));
-      } else if (child instanceof Text) {
-        sb.append(" \"").append(StringEscapeUtil.escapeJava(((Text) child).getValue())).append('"');
-      }
+
+    public static String write(Element node) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append('(').append(node.getQualifiedName());
+
+        for (int i = 0; i < node.getAttributeCount(); i++) {
+            Attribute attr = node.getAttribute(i);
+            sb.append(" @").append(attr.getQualifiedName()).append('=').append('"');
+            String attrValue = StringEscapeUtil.unescapeXml(attr.getValue());
+            sb.append(escapeATDL(attrValue));
+            sb.append('"');
+        }
+        for (int i = 0; i < node.getChildCount(); i++) {
+            Node child = node.getChild(i);
+            if (child instanceof Element) {
+                sb.append(' ').append(write((Element) child));
+            } else if (child instanceof Text) {
+                sb.append(' ').append('"');
+                String textValue = ((Text) child).getValue();
+                sb.append(escapeATDL(textValue));
+                sb.append('"');
+            }
+        }
+        sb.append(')');
+        String result = sb.toString();
+        return result;
     }
-    sb.append(')');
-    return sb.toString();
-  }
+
+    private static String escapeATDL(String s) {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (char ch : s.toCharArray()) {
+            switch (ch) {
+                case '"':
+                    sb.append("\\\"");
+                    break;
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '\f':
+                    sb.append("\\f");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                case '\r':
+                    sb.append("\\r");
+                    break;
+                case '\t':
+                    sb.append("\\t");
+                    break;
+                default:
+                    sb.append(ch);
+            }
+        }
+
+        return sb.toString();
+    }
+
 }

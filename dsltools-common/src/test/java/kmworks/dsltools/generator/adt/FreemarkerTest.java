@@ -23,7 +23,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.FileInputStream;
-import kmworks.dsltools.adt.adt.*;
+import kmworks.dsltools.ast.adt.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class FreemarkerTest {
             if (result.hasValue()) {
                 grammar = result.semanticValue();
             } else {
-                errorMsg = parser.fmtErrorMsg(Files.toString(srcFile, StandardCharsets.UTF_8), result.parseError());
+                errorMsg = parser.fmtErrorMsg(Files.asCharSource(srcFile, StandardCharsets.UTF_8).read(), result.parseError());
                 isError = true;
             }
         } else {

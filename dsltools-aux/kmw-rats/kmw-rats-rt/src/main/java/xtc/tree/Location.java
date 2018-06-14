@@ -18,6 +18,8 @@
  */
 package xtc.tree;
 
+import xtc.parser.Column;
+
 import java.io.IOException;
 
 /**
@@ -36,6 +38,14 @@ public class Location implements Comparable {
 
   /** The column. */
   public final int column;
+
+  /**
+   * Create a new location from a Column
+   *
+   */
+  public Location(Column c) {
+    this(c.file, c.line, c.column);
+  }
 
   /**
    * Create a new location.
@@ -77,20 +87,6 @@ public class Location implements Comparable {
     }
   }
 
-  /**
-   * Write this location to the specified appenable.
-   *
-   * @param out The appendable.
-   * @throws IOException Signals an I/O error.
-   */
-  public void write(Appendable out) throws IOException {
-    out.append(file);
-    out.append(':');
-    out.append(Integer.toString(line));
-    out.append(':');
-    out.append(Integer.toString(column));
-  }
-
   @Override
   public String toString() {
     StringBuilder buf = new StringBuilder();
@@ -102,6 +98,16 @@ public class Location implements Comparable {
     buf.append(column);
 
     return buf.toString();
-  }    
+  }
+
+  /**
+   * Write this location to the specified appenable.
+   *
+   * @param out The appendable.
+   * @throws IOException Signals an I/O error.
+   */
+  public void write(Appendable out) throws IOException {
+    out.append(toString());
+  }
 
 }

@@ -38,7 +38,7 @@ public class ADTGenTest {
         String xmlResult = "";
         try {
             parseResult = ParserUtil.parseFile(parserName, srcFile);
-            kmworks.dsltools.adt.adt.ToXML_Visitor visitor = new kmworks.dsltools.adt.adt.ToXML_Visitor();
+            kmworks.dsltools.ast.adt.ToXML_Visitor visitor = new kmworks.dsltools.ast.adt.ToXML_Visitor();
             Document doc = visitor.visit(parseResult.semanticValue());
             xmlResult = doc.toXML();
         } catch (Exception ex) {

@@ -63,6 +63,8 @@ public abstract class ParserBase {
     // -------------------------------------------------------------------------
     /**
      * The reader for the character stream to be parsed.
+     * Make sure to close it after parsing
+     * the input stream has been completed.
      */
     protected Reader yyReader;
 
@@ -192,8 +194,8 @@ public abstract class ParserBase {
     protected abstract Column newColumn();
 
     /**
-     * Get the column at the specified index. If the column at the specified index has not been created yet, it is created as a
-     * side-effect of calling this method.
+     * Get the column at the specified index. If the column at the specified index has not been created yet,
+     * it is created as a side-effect of calling this method.
      *
      * @param index The index.
      * @return The corresponding column.

@@ -23,9 +23,12 @@ import kmworks.dsltools.parser.adt.ADT_Parser;
 //import kmworks.dsltools.parser.ml.EBNF_Parser;
 //import kmworks.dsltools.parser.ml.EBNF_W3C_Parser;
 import kmworks.dsltools.parser.ml.PEG_Parser;
+import kmworks.util.lambda.Function3;
 import xtc.parser.ParserBase;
 
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -33,41 +36,41 @@ import java.io.Reader;
  */
 public final class ParserFactory {
 
-    public ParserFactory() {
+    private static final ParserFactory INSTANCE = new ParserFactory();
+
+    private final Map<String, Function3<Reader, String, Integer, ? extends AbstractParser>> parserRegistry =
+            new HashMap<>();
+
+    private ParserFactory() {
+        parserRegistry.put("ADT", (r, f, s) -> new ADT_Parser(r, f, s));
+        parserRegistry.put("PEG", (r, f, s) -> new PEG_Parser(r, f, s));
     }
 
-    public static AbstractParser newParser(final String language, final Reader reader) {
-        return newParser(language, reader, ParserBase.INIT_SIZE - 1);
+    public static void registerParser(String syntaxType,
+                                      Function3<Reader, String, Integer, ? extends AbstractParser> parserMaker) {
+        INSTANCE.parserRegistry.put(syntaxType, parserMaker);
     }
 
-    public static AbstractParser newParser(final String language, final Reader reader, final long size) {
-        return newParser(language, reader, size, "SRC");
+    public static AbstractParser newParser(final String syntaxType, final Reader reader) {
+        return newParser(syntaxType, reader, ParserBase.INIT_SIZE - 1);
     }
 
-    public static AbstractParser newParser(final String language, final Reader reader, final long size, final String fileName) {
+    public static AbstractParser newParser(final String syntaxType, final Reader reader, final long size) {
+        return newParser(syntaxType, reader, size, "SRC");
+    }
 
-        AbstractParser parser;
+    public static AbstractParser newParser(final String syntaxType,
+                                           final Reader reader, final long size, final String fileName) {
+        return INSTANCE.createParser(syntaxType, reader, size, fileName);
+    }
 
-        switch (language) {
-            case "ADT":
-                parser = new ADT_Parser(reader, fileName, (int) size);
-                //parser.setParserId("ADT");              // -> ADT_INVALID_STRING_CHAR_SET should be registered
-                break;
-            //case "EBNF":
-            //    parser = new EBNF_Parser(reader, fileName, (int)size);
-            //    //parser.setParserId("ML.EBNF");        // -> ML.EBNF_INVALID_STRING_CHAR_SET should be registered
-            //    break;
-            //  break;
-            //case "EBNF_W3C":
-            //    parser = new EBNF_W3C_Parser(reader, fileName, (int)size);
-            //    //parser.setParserId("ML.EBNF_W3C");    // -> ML.EBNF_W3C_INVALID_STRING_CHAR_SET should be registered
-            //    break;
-            case "PEG":
-                parser = new PEG_Parser(reader, fileName, (int) size);
-                //parser.setParserId("ML.PEG");           // -> ML.PEG_INVALID_STRING_CHAR_SET should be registered
-                break;
-            default:
-                throw new IllegalArgumentException("No parser for language: " + language);
+    private AbstractParser createParser(
+            final String syntaxType, final Reader reader, final long size, final String fileName) {
+
+        AbstractParser parser = parserRegistry.get(syntaxType).apply(reader, fileName, (int) size);
+
+        if (parser == null) {
+            throw new IllegalArgumentException("No parser for syntax-type: " + syntaxType);
         }
 
         return parser;

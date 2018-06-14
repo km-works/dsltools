@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012-2017 Christian P. Lerch, Vienna, Austria.
+ *   Copyright (C) 2012-2018 Christian P. Lerch, Vienna, Austria.
  *
  *   This file is part of DSLtools - a suite of software tools for effective
  *   DSL implementations.
@@ -19,26 +19,32 @@
  */
 module ADT;
 
-import base.Spacing;                // w EOI Newline etc
-import base.Strings;                // EscapedStringLiteral CodePointRange etc
-import base.Identifiers(base.Spacing);
+import base.GenericSpacing;         // w EOI Newline etc
+import base.GenericStringLiteral;   // StringLiteral
+import base.JavaIdentifier;
 
 header {
+import java.util.*;
 import kmworks.dsltools.parser.base.*;
-import kmworks.dsltools.adt.base.*;
-import kmworks.dsltools.adt.adt.*;
+import kmworks.dsltools.ast.base.*;
+import static kmworks.dsltools.parser.base.CodepointUtils.*;
+import kmworks.dsltools.ast.adt.*;
 }
 
-option parser(kmworks.dsltools.parser.adt.ADT_Parser);
+body {
+    protected void initParser() {
+        setSyntaxType(AbstractParser.IDENTIFIER$SYNTAX_MODULE, Predefined.SyntaxType.JAVA);
+    }
+}
+
+option withLocation, parser(kmworks.dsltools.parser.adt.ADT_Parser);
 
 /*
   Grammar ADT
 */
 
 public Grammar Start
-    =   w p:Package 
-        a:ADT 
-        EOI
+    =   w p:Package a:ADT EOI
         { yyValue = NodeFactory.mkGrammar(p, a); }
 ;
 

@@ -18,16 +18,27 @@
  */
 module PEG;
 
-import base.Spacing;    // w EOI Newline etc
-import base.Strings;    // EscapedStringLiteral CodePointRange etc
+import base.GenericSpacing;         // w EOI Newline etc
+import base.GenericStringLiteral;   // StringLiteral
+import base.GenericIdentifier;
 
 header {
 import java.util.*;
 import kmworks.dsltools.parser.base.*;
+import kmworks.dsltools.ast.base.*;
+import static kmworks.dsltools.parser.base.CodepointUtils.*;
 import nu.xom.Element;
 }
 
-option parser(kmworks.dsltools.parser.ml.PEG_Parser);   // , parent(kmworks.dsltools.parser.base.AbstractParser)
+body {
+    protected void initParser() {
+        setSyntaxType(AbstractParser.IDENTIFIER$SYNTAX_MODULE, Predefined.SyntaxType.XML);
+        setSyntaxType(AbstractParser.STRING_LITERAL$SYNTAX_MODULE, Predefined.SyntaxType.JAVA);
+        setSyntaxType(AbstractParser.WHITESPACE$SYNTAX_MODULE, Predefined.SyntaxType.PEG);
+    }
+}
+
+option withLocation, parser(kmworks.dsltools.parser.ml.PEG_Parser);
 
 /*
   Grammar PEG
@@ -48,7 +59,7 @@ public Element Start
  *    Production :: Identifier Choice
  */
 Element Production
-    =   id:Identifier DEFINES w ch:Choice
+    =   id:Identifier w DEFINES w ch:Choice w
         { yyValue = NodeFactory.mkProduction(id, ch); }
 ;
 
@@ -90,7 +101,7 @@ Element Term
  * Primary = NonTerminal | Choice | Terminal 
  */
 Element Primary
-    =   id:Identifier !DEFINES
+    =   id:Identifier w !DEFINES
         { yyValue = NodeFactory.mkNonTerminal(id); }
       / LPAREN Choice RPAREN
       / Terminal
@@ -100,7 +111,9 @@ Element Primary
  *  Terminal
  */
 Element Terminal
-  = lit:EscapedStringLiteral w
+  = <STRING_LITERAL> lit:StringLiteral w
+    { yyValue = NodeFactory.mkLiteral(lit); }
+  / <CHAR_LITERAL> lit:CharLiteral w
     { yyValue = NodeFactory.mkLiteral(lit); }
   / <CODEPOINT_SET> LBRACK rng:( !RBRACK CodePointRange )+ RBRACK w
     { yyValue = NodeFactory.mkCharClass(rng); }
@@ -108,19 +121,31 @@ Element Terminal
     { yyValue = NodeFactory.mkAnyChar(); }
 ;
 
-/*
- *  Identifier = String
- */
-String Identifier
-  = f:IdentFirst r:IdentRest w
-    { yyValue = f + r; }
+String CharLiteral
+    =   SQ sl:( EscapeSequence / !SQ StringContent ) SQ
+        { yyValue = String.valueOf(sl); }
 ;
-transient String IdentFirst
-  = [a-zA-Z_]
+
+List<Character> CodePointRange
+    =   f:CodePoint void:'-' s:CodePoint
+        { yyValue = new ArrayList<Character>(2);
+          yyValue.add(f);
+          yyValue.add(s); }
+    /   f:CodePoint
+        { yyValue = new ArrayList<Character>(1);
+          yyValue.add(f); }
 ;
-transient String IdentRest
-  = [a-zA-Z0-9_.\-]*
+
+Character CodePoint
+    =   EscapeSequence
+    /   EscapedRangeChar
+    /   ![\\\-\]] c:_
 ;
+
+Character EscapedRangeChar
+    =   void:'\\' yyValue:[\-\[\\\]]
+;
+
 
 /*
  *  Atomic tokens
@@ -138,17 +163,20 @@ transient void RPAREN   = ')' w ;
 transient void LBRACK   = '['   ;
 transient void RBRACK   = ']'   ;
 transient void DOT      = '.' w ;
+transient void SQ       = '\'' ;
 
 
-/* For use in HTML output (e.g. in the RRD renderer:
-Identifiers must be a conformant XML NCName because of their possible use in hyperlinks and anchors.
-(see: http://www.w3.org/TR/REC-xml-names/#NT-NCName)
 
-NameStart     ::= ":" | [A-Z] | "_" | [a-z] | [\uC0-\uD6] | [\uD8-\uF6]
-                      | [\uF8-\u2FF] | [\u370-\u37D] | [\u37F-\u1FFF] | [\u200C-\u200D]
-                      | [\u2070-\u218F] | [\u2C00-\u2FEF] | [\u3001-\uD7FF]
-                      | [\uF900-\uFDCF] | [\uFDF0-\uFFFD] | [\u10000-\uEFFFF]
-NameRest      ::= NameStart | "-" | "." | [0-9] | \uB7 | [\u0300-\u036F] | [\u203F-\u2040]
-Name          ::= NameStart (NameRest)*
-NCName        ::= Name - (Char* ':' Char*)	// An XML Name, minus the ":"
+/*
+    For use in HTML output (e.g. in the RRD renderer:
+    Identifiers must be a conformant XML NCName because of their possible use in hyperlinks and anchors.
+    (see: http://www.w3.org/TR/REC-xml-names/#NT-NCName)
+
+    NameStart     ::= ":" | [A-Z] | "_" | [a-z] | [\uC0-\uD6] | [\uD8-\uF6]
+                          | [\uF8-\u2FF] | [\u370-\u37D] | [\u37F-\u1FFF] | [\u200C-\u200D]
+                          | [\u2070-\u218F] | [\u2C00-\u2FEF] | [\u3001-\uD7FF]
+                          | [\uF900-\uFDCF] | [\uFDF0-\uFFFD] | [\u10000-\uEFFFF]
+    NameRest      ::= NameStart | "-" | "." | [0-9] | \uB7 | [\u0300-\u036F] | [\u203F-\u2040]
+    Name          ::= NameStart (NameRest)*
+    NCName        ::= Name - (Char* ':' Char*)	// An XML Name, minus the ":"
 */

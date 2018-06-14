@@ -16,19 +16,19 @@ Primary         <-  Identifier !DEFINES
                     / LPAREN Expression RPAREN
                     / Terminal
 
-Terminal        <-  StringLiteral
+Terminal        <-  StringLiteral w
                     / LBRACK CodePointRange+ RBRACK
                     / DOT
 
 CodePointRange  <- CodePoint '-' CodePoint
                     / CodePoint
 
-CodePoint       <-  EscapeSequence / ![\\\-\]] DOT
+CodePoint       <-  EscapeSequence / !ESC .
 
-EscapeSequence  <-  '\\' [btnfr"'\-\[\\\]]
+EscapeSequence  <-  ESC [nrt'"\[\]\\]
                     / UnicodeEscape
 
-UnicodeEscape   <-  '\\' 'u' HexQuad
+UnicodeEscape   <-  ESC 'u' HexQuad
 HexQuad         <-  HexDigit HexDigit HexDigit HexDigit
 HexDigit        <-  [0-9a-fA-F]
 
@@ -41,8 +41,9 @@ STAR        <-  '*' w
 PLUS        <-  '+' w
 LPAREN      <-  '(' w
 RPAREN      <-  ')' w
-LBRACK      <-  '[' w
+LBRACK      <-  '[' 
 RBRACK      <-  ']' w
-DOT         <-  '.' w
+DOT			<-	'.' w
 
+ESC			<-  '\\'
 EOI         <-  !.

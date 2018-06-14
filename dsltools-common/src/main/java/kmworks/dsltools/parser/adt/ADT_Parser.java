@@ -20,9 +20,11 @@ import xtc.parser.Result;
 import xtc.parser.SemanticValue;
 import xtc.parser.ParseError;
 
+import java.util.*;
 import kmworks.dsltools.parser.base.*;
-import kmworks.dsltools.adt.base.*;
-import kmworks.dsltools.adt.adt.*;
+import kmworks.dsltools.ast.base.*;
+import kmworks.dsltools.ast.adt.*;
+import static kmworks.dsltools.parser.base.CodepointUtils.*;
 
 /**
  * Packrat parser for grammar <code>ADT</code>.
@@ -35,8 +37,8 @@ public final class ADT_Parser extends AbstractParser {
   /** The JAVA_RESERVED_WORDS set. */
   public static final Set<String> JAVA_RESERVED_WORDS = new HashSet<String>();
 
-  /** The JAVA_RESERVERD_TYPES set. */
-  public static final Set<String> JAVA_RESERVERD_TYPES = new HashSet<String>();
+  /** The JAVA_RESERVED_TYPES set. */
+  public static final Set<String> JAVA_RESERVED_TYPES = new HashSet<String>();
 
   // =========================================================================
 
@@ -48,6 +50,7 @@ public final class ADT_Parser extends AbstractParser {
     Result fNBlockComment;
     Result fJIdentifier;
     Result fJPkgNamePart;
+    Result fIdentifier;
   }
 
   // =========================================================================
@@ -115,6 +118,7 @@ public final class ADT_Parser extends AbstractParser {
 
             yyValue = NodeFactory.mkGrammar(p, a);
 
+            setLocation(yyValue, yyStart);
             return yyResult.createValue(yyValue, yyError);
           }
         }
@@ -226,6 +230,7 @@ public final class ADT_Parser extends AbstractParser {
 
                 yyValue = NodeFactory.mkADT(n, main, aux);
 
+                setLocation(yyValue, yyStart);
                 return yyResult.createValue(yyValue, yyError);
               }
             } // End scope for aux.
@@ -325,6 +330,7 @@ public final class ADT_Parser extends AbstractParser {
 
               yyValue = NodeFactory.mkTypeDef(n, k, p, d);
 
+              setLocation(yyValue, yyStart);
               return new SemanticValue(yyValue, yyOption1, yyError);
             } // End scope for d.
           } // End scope for p.
@@ -500,6 +506,7 @@ public final class ADT_Parser extends AbstractParser {
 
             yyValue = NodeFactory.mkParameter(n, r);
 
+            setLocation(yyValue, yyStart);
             return yyResult.createValue(yyValue, yyError);
           }
         }
@@ -559,6 +566,7 @@ public final class ADT_Parser extends AbstractParser {
 
           yyValue = NodeFactory.mkTypeRef(n, m);
 
+          setLocation(yyValue, yyStart);
           return yyResult.createValue(yyValue, yyError);
         }
       } // End scope for m.
@@ -1247,7 +1255,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.w.
+   * Parse nonterminal base.GenericSpacing.w.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1282,7 +1290,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.wr.
+   * Parse nonterminal base.GenericSpacing.wr.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1326,7 +1334,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.EOI.
+   * Parse nonterminal base.GenericSpacing.EOI.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1364,7 +1372,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.Spacing.
+   * Parse nonterminal base.GenericSpacing.Spacing.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1386,8 +1394,9 @@ public final class ADT_Parser extends AbstractParser {
     yyC = character(yyStart);
     if (-1 != yyC) {
       yyIndex = yyStart + 1;
-      if (('\t' == yyC) ||
-          (' ' == yyC)) {
+      char c = (char)yyC;
+
+      if (contains(c, WHITESPACE$SYNTAX_MODULE, WHITESPACE_CHARS)) {
 
         yyValue = null;
 
@@ -1427,7 +1436,9 @@ public final class ADT_Parser extends AbstractParser {
     yyC = character(yyStart);
     if (-1 != yyC) {
       yyIndex = yyStart + 1;
-      if (('\u2028' <= yyC) && (yyC <= '\u2029')) {
+      char c = (char)yyC;
+
+      if (contains(c, WHITESPACE$SYNTAX_MODULE, OTHER_NEWLINE_CHARS)) {
 
         yyValue = null;
 
@@ -1557,7 +1568,9 @@ public final class ADT_Parser extends AbstractParser {
         yyC = character(yyChoice1);
         if (-1 != yyC) {
           yyIndex = yyChoice1 + 1;
-          if (('\u2028' <= yyC) && (yyC <= '\u2029')) {
+          char c = (char)yyC;
+
+          if (contains(c, WHITESPACE$SYNTAX_MODULE, OTHER_NEWLINE_CHARS)) {
 
             yyValue = null;
 
@@ -1586,7 +1599,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.Newline.
+   * Parse nonterminal base.GenericSpacing.Newline.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1630,7 +1643,9 @@ public final class ADT_Parser extends AbstractParser {
     yyC = character(yyStart);
     if (-1 != yyC) {
       yyIndex = yyStart + 1;
-      if (('\u2028' <= yyC) && (yyC <= '\u2029')) {
+      char c = (char)yyC;
+
+      if (contains(c, WHITESPACE$SYNTAX_MODULE, OTHER_NEWLINE_CHARS)) {
 
         yyValue = null;
 
@@ -1646,7 +1661,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.TBCommentContents.
+   * Parse nonterminal base.GenericSpacing.TBCommentContents.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1681,7 +1696,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.TBCommentContent.
+   * Parse nonterminal base.GenericSpacing.TBCommentContent.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1697,91 +1712,37 @@ public final class ADT_Parser extends AbstractParser {
     // Alternative 1.
 
     yyC = character(yyStart);
-    if ('*' == yyC) {
-      yyIndex = yyStart + 1;
-
-      yyPredMatched = false;
-
-      yyC = character(yyIndex);
-      if ('/' == yyC) {
-
-        yyPredMatched = true;
-      }
-
-      if (! yyPredMatched) {
-
-        yyValue = null;
-
-        return new SemanticValue(yyValue, yyIndex, yyError);
-      } else {
-        yyError = yyError.select("t b comment content expected", yyStart);
-      }
-    }
-
-    // Alternative 2.
-
-    yyC = character(yyStart);
     if (-1 != yyC) {
       yyIndex = yyStart + 1;
-      if (('\t' == yyC) ||
-          (' ' == yyC)) {
 
-        yyValue = null;
+      switch (yyC) {
+      case '*':
+        {
+          yyPredMatched = false;
 
-        return new SemanticValue(yyValue, yyIndex, yyError);
-      }
-    }
+          yyC = character(yyIndex);
+          if ('/' == yyC) {
 
-    // Alternative 3.
+            yyPredMatched = true;
+          }
 
-    yyC = character(yyStart);
-    if ('\r' == yyC) {
-      yyIndex = yyStart + 1;
+          if (! yyPredMatched) {
 
-      yyC = character(yyIndex);
-      if ('\n' == yyC) {
-        yyIndex = yyIndex + 1;
+            yyValue = null;
 
-        yyValue = null;
+            return new SemanticValue(yyValue, yyIndex, yyError);
+          } else {
+            yyError = yyError.select("t b comment content expected", yyStart);
+          }
+        }
+        break;
 
-        return new SemanticValue(yyValue, yyIndex, yyError);
-      }
-    }
+      default:
+        {
+          yyValue = null;
 
-    // Alternative 4.
-
-    yyC = character(yyStart);
-    if ('\n' == yyC) {
-      yyIndex = yyStart + 1;
-
-      yyValue = null;
-
-      return new SemanticValue(yyValue, yyIndex, yyError);
-    }
-
-    // Alternative 5.
-
-    yyC = character(yyStart);
-    if (-1 != yyC) {
-      yyIndex = yyStart + 1;
-      if (('\u2028' <= yyC) && (yyC <= '\u2029')) {
-
-        yyValue = null;
-
-        return new SemanticValue(yyValue, yyIndex, yyError);
-      }
-    }
-
-    // Alternative 6.
-
-    yyC = character(yyStart);
-    if (-1 != yyC) {
-      yyIndex = yyStart + 1;
-      if ('*' != yyC) {
-
-        yyValue = null;
-
-        return new SemanticValue(yyValue, yyIndex, yyError);
+          return new SemanticValue(yyValue, yyIndex, yyError);
+        }
       }
     }
 
@@ -1793,7 +1754,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.NBlockComment.
+   * Parse nonterminal base.GenericSpacing.NBlockComment.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1806,7 +1767,7 @@ public final class ADT_Parser extends AbstractParser {
     return yyColumn.fNBlockComment;
   }
 
-  /** Actually parse base.Spacing.NBlockComment. */
+  /** Actually parse base.GenericSpacing.NBlockComment. */
   private Result pNBlockComment$1(final int yyStart) throws IOException {
     int        yyC;
     int        yyIndex;
@@ -1859,7 +1820,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.NBCommentContents.
+   * Parse nonterminal base.GenericSpacing.NBCommentContents.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1894,7 +1855,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Spacing.NBCommentContent.
+   * Parse nonterminal base.GenericSpacing.NBCommentContent.
    *
    * @param yyStart The index.
    * @return The result.
@@ -1943,91 +1904,37 @@ public final class ADT_Parser extends AbstractParser {
     // Alternative 3.
 
     yyC = character(yyStart);
-    if ('*' == yyC) {
-      yyIndex = yyStart + 1;
-
-      yyPredMatched = false;
-
-      yyC = character(yyIndex);
-      if (')' == yyC) {
-
-        yyPredMatched = true;
-      }
-
-      if (! yyPredMatched) {
-
-        yyValue = null;
-
-        return new SemanticValue(yyValue, yyIndex, yyError);
-      } else {
-        yyError = yyError.select("n b comment content expected", yyStart);
-      }
-    }
-
-    // Alternative 4.
-
-    yyC = character(yyStart);
     if (-1 != yyC) {
       yyIndex = yyStart + 1;
-      if (('\t' == yyC) ||
-          (' ' == yyC)) {
 
-        yyValue = null;
+      switch (yyC) {
+      case '*':
+        {
+          yyPredMatched = false;
 
-        return new SemanticValue(yyValue, yyIndex, yyError);
-      }
-    }
+          yyC = character(yyIndex);
+          if (')' == yyC) {
 
-    // Alternative 5.
+            yyPredMatched = true;
+          }
 
-    yyC = character(yyStart);
-    if ('\r' == yyC) {
-      yyIndex = yyStart + 1;
+          if (! yyPredMatched) {
 
-      yyC = character(yyIndex);
-      if ('\n' == yyC) {
-        yyIndex = yyIndex + 1;
+            yyValue = null;
 
-        yyValue = null;
+            return new SemanticValue(yyValue, yyIndex, yyError);
+          } else {
+            yyError = yyError.select("n b comment content expected", yyStart);
+          }
+        }
+        break;
 
-        return new SemanticValue(yyValue, yyIndex, yyError);
-      }
-    }
+      default:
+        {
+          yyValue = null;
 
-    // Alternative 6.
-
-    yyC = character(yyStart);
-    if ('\n' == yyC) {
-      yyIndex = yyStart + 1;
-
-      yyValue = null;
-
-      return new SemanticValue(yyValue, yyIndex, yyError);
-    }
-
-    // Alternative 7.
-
-    yyC = character(yyStart);
-    if (-1 != yyC) {
-      yyIndex = yyStart + 1;
-      if (('\u2028' <= yyC) && (yyC <= '\u2029')) {
-
-        yyValue = null;
-
-        return new SemanticValue(yyValue, yyIndex, yyError);
-      }
-    }
-
-    // Alternative 8.
-
-    yyC = character(yyStart);
-    if (-1 != yyC) {
-      yyIndex = yyStart + 1;
-      if ('*' != yyC) {
-
-        yyValue = null;
-
-        return new SemanticValue(yyValue, yyIndex, yyError);
+          return new SemanticValue(yyValue, yyIndex, yyError);
+        }
       }
     }
 
@@ -2039,7 +1946,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Identifiers.JIdentifier.
+   * Parse nonterminal base.JavaIdentifier.JIdentifier.
    *
    * @param yyStart The index.
    * @return The result.
@@ -2052,7 +1959,7 @@ public final class ADT_Parser extends AbstractParser {
     return yyColumn.fJIdentifier;
   }
 
-  /** Actually parse base.Identifiers.JIdentifier. */
+  /** Actually parse base.JavaIdentifier.JIdentifier. */
   private Result pJIdentifier$1(final int yyStart) throws IOException {
     Result     yyResult;
     String     yyValue;
@@ -2060,12 +1967,12 @@ public final class ADT_Parser extends AbstractParser {
 
     // Alternative 1.
 
-    yyResult = pJIdentWord(yyStart);
+    yyResult = pIdentifier(yyStart);
     yyError  = yyResult.select(yyError);
     if (yyResult.hasValue()) {
       yyValue = yyResult.semanticValue();
 
-      if (!contains(JAVA_RESERVED_WORDS, yyValue) && !contains(JAVA_RESERVERD_TYPES, yyValue)) {
+      if (!contains(JAVA_RESERVED_WORDS, yyValue) && !contains(JAVA_RESERVED_TYPES, yyValue)) {
 
         return yyResult.createValue(yyValue, yyError);
       }
@@ -2079,7 +1986,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Identifiers.JTypeName.
+   * Parse nonterminal base.JavaIdentifier.JTypeName.
    *
    * @param yyStart The index.
    * @return The result.
@@ -2092,12 +1999,12 @@ public final class ADT_Parser extends AbstractParser {
 
     // Alternative 1.
 
-    yyResult = pJIdentWord(yyStart);
+    yyResult = pIdentifier(yyStart);
     yyError  = yyResult.select(yyError);
     if (yyResult.hasValue()) {
       yyValue = yyResult.semanticValue();
 
-      if (!contains(JAVA_RESERVED_WORDS, yyValue)) {
+      if (!contains(JAVA_RESERVED_TYPES, yyValue)) {
 
         return yyResult.createValue(yyValue, yyError);
       }
@@ -2111,60 +2018,7 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Identifiers.JIdentWord.
-   *
-   * @param yyStart The index.
-   * @return The result.
-   * @throws IOException Signals an I/O error.
-   */
-  private Result pJIdentWord(final int yyStart) throws IOException {
-    int        yyC;
-    int        yyIndex;
-    int        yyRepetition1;
-    String     yyValue;
-    ParseError yyError = ParseError.DUMMY;
-
-    // Alternative 1.
-
-    yyC = character(yyStart);
-    if (-1 != yyC) {
-      yyIndex = yyStart + 1;
-      char start = (char)yyC;
-
-      if (Character.isJavaIdentifierStart(start)) {
-
-        yyRepetition1 = yyIndex;
-        while (true) {
-
-          yyC = character(yyRepetition1);
-          if (-1 != yyC) {
-            yyIndex = yyRepetition1 + 1;
-            char part = (char)yyC;
-
-            if (Character.isJavaIdentifierPart(part)) {
-
-              yyRepetition1 = yyIndex;
-              continue;
-            }
-          }
-          break;
-        }
-
-        yyValue = difference(yyStart, yyRepetition1);
-
-        return new SemanticValue(yyValue, yyRepetition1, yyError);
-      }
-    }
-
-    // Done.
-    yyError = yyError.select("j ident word expected", yyStart);
-    return yyError;
-  }
-
-  // =========================================================================
-
-  /**
-   * Parse nonterminal base.Identifiers.JPkgNamePart.
+   * Parse nonterminal base.JavaIdentifier.JPkgNamePart.
    *
    * @param yyStart The index.
    * @return The result.
@@ -2177,7 +2031,7 @@ public final class ADT_Parser extends AbstractParser {
     return yyColumn.fJPkgNamePart;
   }
 
-  /** Actually parse base.Identifiers.JPkgNamePart. */
+  /** Actually parse base.JavaIdentifier.JPkgNamePart. */
   private Result pJPkgNamePart$1(final int yyStart) throws IOException {
     Result     yyResult;
     String     yyValue;
@@ -2185,17 +2039,17 @@ public final class ADT_Parser extends AbstractParser {
 
     // Alternative 1.
 
-    yyResult = pJPkgNameFirst(yyStart);
+    yyResult = pJPkgNameHead(yyStart);
     yyError  = yyResult.select(yyError);
     if (yyResult.hasValue()) {
-      String f = yyResult.semanticValue();
+      String h = yyResult.semanticValue();
 
-      yyResult = pJPkgNameRest(yyResult.index);
+      yyResult = pJPkgNameTail(yyResult.index);
       yyError  = yyResult.select(yyError);
       if (yyResult.hasValue()) {
-        String r = yyResult.semanticValue();
+        String t = yyResult.semanticValue();
 
-        yyValue = f + r;
+        yyValue = h + t;
 
         return yyResult.createValue(yyValue, yyError);
       }
@@ -2208,13 +2062,13 @@ public final class ADT_Parser extends AbstractParser {
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Identifiers.JPkgNameFirst.
+   * Parse nonterminal base.JavaIdentifier.JPkgNameHead.
    *
    * @param yyStart The index.
    * @return The result.
    * @throws IOException Signals an I/O error.
    */
-  private Result pJPkgNameFirst(final int yyStart) throws IOException {
+  private Result pJPkgNameHead(final int yyStart) throws IOException {
     int        yyC;
     int        yyIndex;
     String     yyValue;
@@ -2234,20 +2088,20 @@ public final class ADT_Parser extends AbstractParser {
     }
 
     // Done.
-    yyError = yyError.select("j pkg name first expected", yyStart);
+    yyError = yyError.select("j pkg name head expected", yyStart);
     return yyError;
   }
 
   // =========================================================================
 
   /**
-   * Parse nonterminal base.Identifiers.JPkgNameRest.
+   * Parse nonterminal base.JavaIdentifier.JPkgNameTail.
    *
    * @param yyStart The index.
    * @return The result.
    * @throws IOException Signals an I/O error.
    */
-  private Result pJPkgNameRest(final int yyStart) throws IOException {
+  private Result pJPkgNameTail(final int yyStart) throws IOException {
     int        yyC;
     int        yyIndex;
     int        yyRepetition1;
@@ -2310,6 +2164,128 @@ public final class ADT_Parser extends AbstractParser {
 
   // =========================================================================
 
+  /**
+   * Parse nonterminal base.GenericIdentifier.Identifier.
+   *
+   * @param yyStart The index.
+   * @return The result.
+   * @throws IOException Signals an I/O error.
+   */
+  private Result pIdentifier(final int yyStart) throws IOException {
+    ADT_ParserColumn yyColumn = (ADT_ParserColumn)column(yyStart);
+    if (null == yyColumn.fIdentifier) 
+      yyColumn.fIdentifier = pIdentifier$1(yyStart);
+    return yyColumn.fIdentifier;
+  }
+
+  /** Actually parse base.GenericIdentifier.Identifier. */
+  private Result pIdentifier$1(final int yyStart) throws IOException {
+    Result     yyResult;
+    String     yyValue;
+    ParseError yyError = ParseError.DUMMY;
+
+    // Alternative 1.
+
+    yyResult = pIdentifierHead(yyStart);
+    yyError  = yyResult.select(yyError);
+    if (yyResult.hasValue()) {
+      String h = yyResult.semanticValue();
+
+      yyResult = pIdentifierTail(yyResult.index);
+      yyError  = yyResult.select(yyError);
+      if (yyResult.hasValue()) {
+        String t = yyResult.semanticValue();
+
+        yyValue = h + t;
+
+        return yyResult.createValue(yyValue, yyError);
+      }
+    }
+
+    // Done.
+    return yyError;
+  }
+
+  // =========================================================================
+
+  /**
+   * Parse nonterminal base.GenericIdentifier.IdentifierHead.
+   *
+   * @param yyStart The index.
+   * @return The result.
+   * @throws IOException Signals an I/O error.
+   */
+  private Result pIdentifierHead(final int yyStart) throws IOException {
+    int        yyC;
+    int        yyIndex;
+    String     yyValue;
+    ParseError yyError = ParseError.DUMMY;
+
+    // Alternative 1.
+
+    yyC = character(yyStart);
+    if (-1 != yyC) {
+      yyIndex = yyStart + 1;
+      char c = (char)yyC;
+
+      if (isIdentifierHeadChar(c)) {
+
+        yyValue = difference(yyStart, yyIndex);
+
+        return new SemanticValue(yyValue, yyIndex, yyError);
+      }
+    }
+
+    // Done.
+    yyError = yyError.select("identifier head expected", yyStart);
+    return yyError;
+  }
+
+  // =========================================================================
+
+  /**
+   * Parse nonterminal base.GenericIdentifier.IdentifierTail.
+   *
+   * @param yyStart The index.
+   * @return The result.
+   * @throws IOException Signals an I/O error.
+   */
+  private Result pIdentifierTail(final int yyStart) throws IOException {
+    int        yyC;
+    int        yyIndex;
+    int        yyRepetition1;
+    String     yyValue;
+    ParseError yyError = ParseError.DUMMY;
+
+    // Alternative 1.
+
+    yyRepetition1 = yyStart;
+    while (true) {
+
+      yyC = character(yyRepetition1);
+      if (-1 != yyC) {
+        yyIndex = yyRepetition1 + 1;
+        char c = (char)yyC;
+
+        if (isIdentifierTailChar(c)) {
+
+          yyRepetition1 = yyIndex;
+          continue;
+        }
+      }
+      break;
+    }
+
+    yyValue = difference(yyStart, yyRepetition1);
+
+    return new SemanticValue(yyValue, yyRepetition1, yyError);
+  }
+
+  // =========================================================================
+
+  protected void initParser() {
+    setSyntaxType(AbstractParser.IDENTIFIER$SYNTAX_MODULE, Predefined.SyntaxType.JAVA);
+  }
   static {
     add(JAVA_RESERVED_WORDS, new String[] {
       "abstract",     "assert",       "break",        "case",         "catch",
@@ -2322,7 +2298,7 @@ public final class ADT_Parser extends AbstractParser {
       "throw",        "throws",       "transient",    "try",          "volatile",
       "while",        "void",         "null",         "true",         "false"
     });
-    add(JAVA_RESERVERD_TYPES, new String[] {
+    add(JAVA_RESERVED_TYPES, new String[] {
       "boolean",      "byte",         "char",         "double",       "float",
       "int",          "long",         "short"
     });

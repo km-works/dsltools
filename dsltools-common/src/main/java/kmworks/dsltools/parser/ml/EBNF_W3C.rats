@@ -19,12 +19,14 @@
  */
 module EBNF_W3C;
 
-import base.Spacing;    // w EOI Newline etc
-import base.Strings;    // EscapedStringLiteral CodePointRange etc
+import base.GenericSpacing;         // w EOI Newline etc
+import base.GenericStringLiteral;   // StringLiteral
 
 header {
+import java.util.*;
 import kmworks.dsltools.parser.base.*;
-import kmworks.dsltools.adt.ml.*;
+import kmworks.dsltools.ast.base.*;
+import static kmworks.dsltools.parser.base.CodepointUtils.*;
 }
 
 option parser(kmworks.dsltools.parser.ml.EBNF_W3C_Parser);

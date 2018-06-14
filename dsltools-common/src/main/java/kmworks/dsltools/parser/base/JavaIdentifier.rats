@@ -1,0 +1,74 @@
+/*
+ *   Copyright (C) 2012-2017 Christian P. Lerch, Vienna, Austria.
+ *
+ *   This file is part of DSLtools - a suite of software tools for effective
+ *   DSL implementations.
+ *
+ *   DSLtools is free software: you can use, modify and redistribute it under
+ *   the terms of the GNU General Public License version 3 as published by
+ *   the Free Software Foundation, Inc. <http://fsf.org/>
+ *
+ *   DSLtools is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *   version 3 for details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
+ *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+
+/*
+ * Definition of Java identifiers.
+ */
+
+module base.JavaIdentifier;
+
+import base.GenericIdentifier;
+
+body {
+  static {
+    add(JAVA_RESERVED_WORDS, new String[] {
+        "abstract",     "assert",       "break",        "case",         "catch",     
+        "class",        "const",        "continue",     "default",      "do",        
+        "else",         "enum",         "extends",      "final",        "finally",       
+        "for",          "goto",         "if",           "implements",   "import",        
+        "instanceof",   "interface",    "native",       "new",          "package",    
+        "private",      "protected",    "public",       "return",       "static",       
+        "strictfp",     "super",        "switch",       "synchronized", "this",
+        "throw",        "throws",       "transient",    "try",          "volatile",     
+        "while",        "void",         "null",         "true",         "false"
+    });
+    add(JAVA_RESERVED_TYPES, new String[] {
+        "boolean",      "byte",         "char",         "double",       "float", 
+        "int",          "long",         "short"
+    });
+  }
+}
+
+option setOfString(JAVA_RESERVED_WORDS), setOfString(JAVA_RESERVED_TYPES);
+
+
+String JIdentifier 
+    =   yyValue:Identifier
+        &{ !contains(JAVA_RESERVED_WORDS, yyValue) && !contains(JAVA_RESERVED_TYPES, yyValue) }
+;
+
+String JTypeName
+    =   yyValue:Identifier
+        &{ !contains(JAVA_RESERVED_TYPES, yyValue) }
+;
+
+String JPkgNamePart
+    =   h:JPkgNameHead t:JPkgNameTail
+        { yyValue = h + t; }
+;
+
+transient String JPkgNameHead
+    =   [a-z]
+;
+
+transient String JPkgNameTail
+    =   ( JPkgNameHead / [0-9_] )*
+;
+

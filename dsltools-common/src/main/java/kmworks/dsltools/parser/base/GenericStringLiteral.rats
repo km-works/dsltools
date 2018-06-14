@@ -1,0 +1,64 @@
+/*
+ *   Copyright (C) 2012-2018 Christian P. Lerch, Vienna, Austria.
+ *
+ *   This file is part of DSLtools - a suite of software tools for effective
+ *   DSL implementations.
+ *
+ *   DSLtools is free software: you can use, modify and redistribute it under
+ *   the terms of the GNU General Public License version 3 as published by
+ *   the Free Software Foundation, Inc. <http://fsf.org/>
+ *
+ *   DSLtools is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *   version 3 for details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this distribution. If not, see <http://km-works.eu/res/GPL.txt> or
+ *   <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+
+/*
+ *  Definitions for generic StringLiterals
+ *
+ *  Note: These productions do NOT process trailing whitespace!
+ *        This MUST be done in the calling modules.
+ */
+
+module base.GenericStringLiteral;
+
+public String StringLiteral 
+    =   DQ cl:( EscapeSequence / !DQ StringContent )* DQ
+        { yyValue = asString(cl); }
+;
+
+public Character EscapeSequence
+    =   CharEscape
+    /   UnicodeEscape
+;
+
+public Character StringContent
+    =   yyValue:_ &{ !isStringLiteralInvalidChar(yyValue) }
+;
+
+Character UnicodeEscape
+    =   ESC void:'u' hq:HexQuad
+        { yyValue = (char) Integer.parseInt(hq, 16); }
+;
+
+Character CharEscape
+    =   ESC c:_ &{ isStringLiteralEscapedChar(c) }
+        { yyValue = unescapeStringLiteral("\\" + c).charAt(0); }
+;
+
+String HexQuad
+    =   h1:HexDigit h2:HexDigit h3:HexDigit h4:HexDigit
+        { yyValue = asString(h1, h2, h3, h4); }
+;
+
+Character HexDigit
+    =   yyValue:_ &{ isHexDigit(yyValue) }
+;
+
+private void ESC = '\\' ;
+private void DQ  = '"' ;

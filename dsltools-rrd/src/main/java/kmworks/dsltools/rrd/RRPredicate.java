@@ -18,7 +18,7 @@
  */
 package kmworks.dsltools.rrd;
 
-import kmworks.dsltools.adt.base.PredicateType;
+import kmworks.dsltools.ast.base.PredicateType;
 
 /**
  *

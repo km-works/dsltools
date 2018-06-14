@@ -36,16 +36,17 @@ public final class ParserUtil {
     private ParserUtil() {}
     
     
-    public static Result parseFile(String parserName, File srcFile) throws Exception {
+    public static Result parseFile(String syntaxType, File srcFile) throws Exception {
         Result parseResult;
         try (Reader reader = new InputStreamReader(new FileInputStream(srcFile), StandardCharsets.UTF_8)) {
-            AbstractParser parser = ParserFactory.newParser(parserName, reader, srcFile.length(), srcFile.getName() );
+            AbstractParser parser = ParserFactory.newParser(syntaxType, reader, srcFile.length(), srcFile.getName() );
             parseResult = parser.parse();
             if (parseResult == null) {
-                throw new RuntimeException("Parser returned no result");
+                throw new RuntimeException("Parser returned no results");
             }
             if (!parseResult.hasValue()) {
-                String errorMsg = parser.fmtErrorMsg(Files.toString(srcFile, StandardCharsets.UTF_8), parseResult.parseError());
+                String errorMsg = parser.fmtErrorMsg(
+                        Files.asCharSource(srcFile, StandardCharsets.UTF_8).read(), parseResult.parseError());
                 throw new RuntimeException(errorMsg);
             }
         }

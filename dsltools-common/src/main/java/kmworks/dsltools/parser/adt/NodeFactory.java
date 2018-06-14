@@ -1,10 +1,10 @@
 package kmworks.dsltools.parser.adt;
 
 import com.google.common.base.Optional;
-import kmworks.dsltools.adt.base.Multiplicity;
+import kmworks.dsltools.ast.base.Multiplicity;
 import javax.annotation.Nullable;
-import kmworks.dsltools.adt.adt.*;
-import kmworks.dsltools.adt.base.*;
+import kmworks.dsltools.ast.adt.*;
+import kmworks.dsltools.ast.base.*;
 import xtc.util.Pair;
 
 /**

@@ -1,19 +1,3 @@
-StringLiteral <- EscapedStringLiteral
-
-EscapedStringLiteral <- QuotedStringLiteral
-
-QuotedStringLiteral 
-  <- ["] ( [\\]["\\] / !["] !InvalidStringContent _ )* ["]
-  /  ['] ( [\\]['\\] / !['] !InvalidStringContent _ )* ['] 
-
-CodePointRange
-    <-  CodePoint '-' CodePoint
-    /   CodePoint
-
-CodePoint
-    <-   EscapeSequence
-    /   ![\\\-\]] .
-
 EscapeSequence
   <- '\\' [btnfr"'\-\[\\\]]
   / UnicodeEscape
@@ -22,3 +6,21 @@ UnicodeEscape <- '\\' 'u' HexQuad
 
 HexQuad       <- HexDigit HexDigit HexDigit HexDigit 
 HexDigit      <- [0-9a-fA-F] 
+
+// ----
+
+StringLiteral <- DQ ( EscapeSequence / !DQ . )* DQ
+
+EscapeSequence <-
+        CharEscape
+    /   UnicodeEscape
+
+UnicodeEscape <- ESC 'u' HexQuad
+
+CharEscape <- ESC [btnfr"'\-\[\\\]]
+
+HexQuad       <- HexDigit HexDigit HexDigit HexDigit
+HexDigit      <- [0-9a-fA-F]
+
+ESC <- '\\'
+DQ  <- '\"'
